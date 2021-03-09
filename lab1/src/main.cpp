@@ -17,7 +17,9 @@ int main(int argc, char **argv)
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_SINGLE);
     glutInitWindowSize(400, 300);
-    glutInitWindowPosition(100, 100); // sdddddddddddddddddddddddddddddddd
+    glutInitWindowPosition(
+        100,
+        100); // sdddddddddddddddddddddddddddddddd
               // ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
 
     glutCreateWindow("Hello world!");
