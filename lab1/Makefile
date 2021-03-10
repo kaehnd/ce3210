@@ -14,11 +14,11 @@ FLAGS ?= -I$(INC_DIR) -Wall -Wextra -g
 all: $(BUILD_DIR)/$(TARGET_EXEC)
 
 $(BUILD_DIR)/$(TARGET_EXEC): $(OBJS)
-	$(CC) $(OBJS) -o $@ $(LDFLAGS)
+	g++ $(OBJS) -o $@ $(LDFLAGS)
 
 $(BUILD_DIR)/%.cpp.o: %.cpp
 	mkdir -p $(dir $@)
-	$(CC) $(FLAGS) -c $< -o $@
+	g++ $(FLAGS) -c $< -o $@
 
 .PHONY: clean
 clean:

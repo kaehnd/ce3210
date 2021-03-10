@@ -43,10 +43,10 @@ fi
 #Add Makefile last
 submitFiles="$submitFiles ./Makefile"
 
-echo -e "Creating $outFilename.pdf...\n"
+echo -e "Creating $outFilename.pdf..."
 
 a2ps --pro=color --toc -E -1 --header="$outFilename" --line-numbers=1 \
   -l 90 -T 4 -o - $submitFiles | ps2pdfwr - "$outFilename".pdf
 
-echo -e "\n\nCreating $outFilename.zip... \n"
+echo -e "\nCreating $outFilename.zip..."
 zip "$outFilename".zip $submitFiles
