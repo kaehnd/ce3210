@@ -1,5 +1,5 @@
 #Script to create pdf and zip submission from source files in
-#src/ and include/ directories
+#src/ and inc/ directories
 #Takes one parameter, the name (without extension) of both output files
 
 declare -A src #src files already processed
@@ -10,9 +10,9 @@ outFilename=$1
 submitFiles="./src/main.cpp"
 src[$submitFiles]=1
 
-#Add each include/ header file if files exist in include/ dir
+#Add each inc/ header file if files exist in inc/ dir
 #and add the corresponding cpp files in order if they exist
-DIR=./include
+DIR=./inc
 if [ "$(ls -A $DIR)" ]; then
 
   for f in $DIR/*; do

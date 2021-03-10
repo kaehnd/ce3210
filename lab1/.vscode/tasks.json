@@ -33,7 +33,7 @@
         {
             "type": "shell",
             "label": "Create Submission",
-            "command": "./createSubmission.bash ${workspaceFolderBasename}_Daniel_Kaehn",
+            "command": "../createSubmission.bash ${workspaceFolderBasename}_Daniel_Kaehn",
             "options": {
                 "cwd": "${workspaceFolder}"
             },
