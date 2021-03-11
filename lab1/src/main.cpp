@@ -1,46 +1,45 @@
-// code9.cpp
-// STL vector
-//
+#include <fstream>
+#include <iomanip>
 #include <iostream>
 #include <string>
-#include <vector>
 
-using namespace std; // for iostream, string and vector
+using namespace std; // for iostream, string
 
-int main()
+void processStlFile(string filename)
 {
-	// make a vectors
-	vector<string> vs;
-	
-	vs.push_back("one");
-	string s = "two";
-	string s2 = s;
-	s[1]='X';
-	vs.push_back(s);
-	vs.push_back(s2);
-	s = "three";
-	vs.push_back(s);
-	vs.push_back(s2);
-	s[1]='Y';
-	vs.push_back(s);
+    int facetNum = 0;
 
-	// iterate	
-	for (int i = 0; i < (int) vs.size(); i++)
-	{
-		cout << vs[i] << ", ";
-	}
-	cout << endl;
+    double maxX = 0, maxY = 0, maxZ = 0;
+    double minX = 0, minY = 0, minZ = 0;
 
-	// get rid of an element
-	vs.pop_back();
-	
-	// better yet - use iterators
-	for (vector<string>::iterator it = vs.begin(); it != vs.end(); ++it)
-	{
-		cout << *it << ", ";
-	}
-	cout << endl;		
-		 
-	return 0;
+    cout << "Processing " << filename << "..." << endl;
+
+
+
+    cout << "=======================" << endl
+         << "========SUMMARY========" << endl
+         << "=======================" << endl;
+
+    cout << "In " << facetNum << " facets:" << endl;
+    cout << "Max x coordinate was " << maxX << endl;
+    cout << "Max y coordinate was " << maxY << endl;
+    cout << "Max z coordinate was " << maxZ << endl;
+
+    cout << "Min x coordinate was " << minX << endl;
+    cout << "Min y coordinate was " << minY << endl;
+    cout << "Min z coordinate was " << minZ << endl;
+
 }
-	 
+
+int main(int argc, char **argv)
+{
+    if (argc < 2)
+    {
+        cout << "include file name on command line" << endl;
+    }
+    else
+    {
+        processStlFile(argv[1]);
+    }
+    return 0;
+}

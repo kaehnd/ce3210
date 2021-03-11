@@ -9,7 +9,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/main",
-            "args": [],
+            "args": ["./test.stl"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
