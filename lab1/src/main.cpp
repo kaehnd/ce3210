@@ -1,36 +1,35 @@
+/**
+ * CS 3210 011
+ * Daniel Kaehn
+ * Lab 1: C++ Console Program
+ * 03/14/2021
+ *
+ * main.cpp: implements program reading and printing contents of an STL file
+ */
+
+#include "stlFileReader.h"
 #include <fstream>
 #include <iomanip>
 #include <iostream>
 #include <string>
 
-using namespace std; // for iostream, string
+using namespace std;
 
+/**
+ * @brief uses stlFileReader class to read in
+ * and print contents and summary of an STL file
+ */
 void processStlFile(string filename)
 {
-    int facetNum = 0;
-
-    double maxX = 0, maxY = 0, maxZ = 0;
-    double minX = 0, minY = 0, minZ = 0;
-
-    cout << "Processing " << filename << "..." << endl;
-
-
-
-    cout << "=======================" << endl
-         << "========SUMMARY========" << endl
-         << "=======================" << endl;
-
-    cout << "In " << facetNum << " facets:" << endl;
-    cout << "Max x coordinate was " << maxX << endl;
-    cout << "Max y coordinate was " << maxY << endl;
-    cout << "Max z coordinate was " << maxZ << endl;
-
-    cout << "Min x coordinate was " << minX << endl;
-    cout << "Min y coordinate was " << minY << endl;
-    cout << "Min z coordinate was " << minZ << endl;
-
+    stlFileReader fileReader(filename);
+    fileReader.processFile();
+    fileReader.printSummary();
 }
 
+/**
+ * @brief main entry to program,
+ * takes one command line argument of the STL file filename
+ */
 int main(int argc, char **argv)
 {
     if (argc < 2)
@@ -39,7 +38,8 @@ int main(int argc, char **argv)
     }
     else
     {
-        processStlFile(argv[1]);
+        char *filename = argv[1];
+        processStlFile(filename);
     }
     return 0;
 }
