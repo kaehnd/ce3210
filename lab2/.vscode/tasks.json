@@ -16,7 +16,7 @@
         {
             "type": "shell",
             "label": "C++ Run Project",
-            "command": "./build/main ./sim.stl",
+            "command": "./build/main",
             "options": {
                 "cwd": "${workspaceFolder}"
             },
