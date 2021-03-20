@@ -33,39 +33,40 @@ class matrixException:public std::runtime_error
 class matrix
 {
 
+	//In hindsight, probably a lot of overhead memory and code complexity for the syntax benefits
 	class matrixVector
 	{
+
 		public:
 			matrixVector();
 			matrixVector(double * values, int length, int stepSize);
+			//matrixVector(matrixVector& other); use default copy constructor, never pass by value
 			~matrixVector();
 
 			void setSpace(double * values, int length, int stepSize);
-			double sum();
+			double sum() const;
 
-			int getLength();
+			std::ostream & out(std::ostream& os) const;
 
-			matrixVector operator = (const matrixVector & other);
+			matrixVector& operator = (const matrixVector & other);
+			matrixVector& operator += (const double scale);
+			matrixVector& operator += (const matrixVector & other);
+			matrixVector& operator*=(const double scale);
 
-
-			matrixVector operator*(const double scale) const;
-			matrixVector operator*(const matrixVector & other) const;
-
-			matrixVector operator+(const double scale) const;
-			matrixVector operator+(const matrixVector & other) const;
-			matrixVector operator += (const double scale);
-			matrixVector operator += (const matrixVector & other);
-			matrixVector operator*=(const double scale);
+			double& operator[](unsigned int index);
+			double operator[](unsigned int index) const;
 
 		private:
-			double * values;
-			int stepSize;
-			int length;
+			double ** values;
+			unsigned int length;
 		
 	};
 
 
+
+
 	public:
+
 
 
 		// No default (no argument) constructor.  It doesn't really make
@@ -155,14 +156,14 @@ class matrix
 		//
 		// throw (matrixException)
 		//
-		double* operator[](unsigned int row);
+		matrixVector& operator[](unsigned int row);
  
 		// const version of above - throws an exception if indices are out of
 		// range
 		//
 		// throw (matrixException)
 		//
-		double* operator[](unsigned int row) const;
+		const matrixVector& operator[](unsigned int row) const;
  
 		// I/O - for convenience - this is intended to be called by the global
 		// << operator declared below.
@@ -174,11 +175,11 @@ class matrix
 		// perhaps preferred, you could store the data as an array of arrays
 		// which would require the_Matrix to be changed to a double**.
 		double * matrixHeap;
-		matrixVector &* rows;
-		matrixVector &* cols;
+		matrixVector * rows;
+		matrixVector * cols;
 
-		int numRows;
-		int numCols;
+		unsigned int numRows;
+		unsigned int numCols;
 
 
 		/** routines **/

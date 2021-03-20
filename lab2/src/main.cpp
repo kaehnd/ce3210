@@ -21,6 +21,7 @@ int main(void)
 
 	cout << "m3 - should be 3 x 3 identity matrix" << endl;
 	cout << m3 << endl;
+
 	
 	try
 	{
