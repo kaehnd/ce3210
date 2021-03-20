@@ -41,8 +41,13 @@ class matrix
 			~matrixVector();
 
 			void setSpace(double * values, int length, int stepSize);
+			double sum();
 
 			int getLength();
+
+			matrixVector operator = (const matrixVector & other);
+
+
 			matrixVector operator*(const double scale) const;
 			matrixVector operator*(const matrixVector & other) const;
 
@@ -50,7 +55,7 @@ class matrix
 			matrixVector operator+(const matrixVector & other) const;
 			matrixVector operator += (const double scale);
 			matrixVector operator += (const matrixVector & other);
-
+			matrixVector operator*=(const double scale);
 
 		private:
 			double * values;
@@ -169,8 +174,8 @@ class matrix
 		// perhaps preferred, you could store the data as an array of arrays
 		// which would require the_Matrix to be changed to a double**.
 		double * matrixHeap;
-		matrixVector * rows;
-		matrixVector * cols;
+		matrixVector &* rows;
+		matrixVector &* cols;
 
 		int numRows;
 		int numCols;

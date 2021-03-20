@@ -111,17 +111,29 @@ matrix matrix::operator*(const matrix& rhs) const
 
 	if (numCols!= rhs.numRows)
 	{
-		
+		throw new matrixException("Can't do that");
 	}
-	// stub
-	matrix retVal(rhs);
+	matrix retVal(numRows, rhs.numCols);
+
+	for (int i = 0; i < numCols; i++)
+	{
+		retVal.cols[i] = cols[i] * rhs.rows[i].sum();
+	}
+
 	return retVal;
 }
 
 matrix matrix::operator*(const double scale) const
 {
+
 	// stub
 	matrix retVal(*this);
+
+	for (int i = 0; i < numRows; i++)
+	{
+		retVal.rows[i] *= scale;
+	}
+
 	return retVal;
 }
 
@@ -173,9 +185,5 @@ std::ostream& operator<<(std::ostream& os, const matrix& rhs)
 // Global scalar multiplication
 matrix operator*(const double scale, const matrix& rhs)
 {
-	// stub
-	matrix retval(rhs);
-	return retval;
+	return rhs * scale;
 }
-
-
