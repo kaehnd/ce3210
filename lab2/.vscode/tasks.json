@@ -16,7 +16,7 @@
         {
             "type": "shell",
             "label": "C++ Run Project",
-            "command": "./build/main",
+            "command": "valgrind ./build/main -s --leak-check=full",
             "options": {
                 "cwd": "${workspaceFolder}"
             },
