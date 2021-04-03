@@ -1,0 +1,46 @@
+{
+    "tasks": [
+        {
+            "type": "shell",
+            "label": "C++ Build Project",
+            "command": "make",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": "build",
+            "detail": "Build all files in src"
+        },
+        {
+            "type": "shell",
+            "label": "C++ Run Project",
+            "command": "valgrind ./build/main -s --leak-check=full",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "detail": "Run Main",
+            "dependsOn": "C++ Build Project"
+        },
+        {
+            "type": "shell",
+            "label": "Create Submission",
+            "command": "../createSubmission.bash ${workspaceFolderBasename}_Daniel_Kaehn",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "group": "build",
+            "detail": "Create PDF Submission",
+            "problemMatcher": []
+        }
+    ],
+    "version": "2.0.0"
+}
