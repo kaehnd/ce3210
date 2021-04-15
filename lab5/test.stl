@@ -1,0 +1,44 @@
+solid Default
+  facet normal 0 0 0
+    outer loop
+      vertex   0 0 0
+      vertex   50 100 0
+      vertex   100 100 0
+    endloop
+  endfacet
+  facet normal 0 0 0
+    outer loop
+      vertex   100 100 0
+      vertex   150 200 0
+      vertex   200 200 0
+    endloop
+  endfacet
+  facet normal 0 0 0
+    outer loop
+      vertex   500 500 0
+      vertex   550 500 0
+      vertex   600 560 0
+    endloop
+  endfacet
+  facet normal 0 0 0
+    outer loop
+      vertex   500 0 0
+      vertex   50 500 0
+      vertex   100 100 0
+    endloop
+  endfacet
+  facet normal 0 0 0
+    outer loop
+      vertex   300 400 0
+      vertex   150 200 0
+      vertex   600 200 0
+    endloop
+  endfacet
+  facet normal 0 0 0
+    outer loop
+      vertex   700 700 0
+      vertex   800 800 0
+      vertex   600 560 0
+    endloop
+  endfacet
+endsolid Default
