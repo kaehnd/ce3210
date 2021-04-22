@@ -1,0 +1,44 @@
+solid Default
+  facet normal 0 0 0
+    outer loop
+      vertex   362 569 0
+      vertex   750 574 0
+      vertex   525 271 0
+    endloop
+  endfacet
+  facet normal 0 0 0
+    outer loop
+      vertex   220 515 0
+      vertex   397 729 0
+      vertex   519 561 0
+    endloop
+  endfacet
+  facet normal 0 0 0
+    outer loop
+      vertex   356 272 0
+      vertex   498 567 0
+      vertex   727 276 0
+    endloop
+  endfacet
+  facet normal 0 0 0
+    outer loop
+      vertex   580 883 0
+      vertex   355 768 0
+      vertex   235 551 0
+    endloop
+  endfacet
+  facet normal 0 0 0
+    outer loop
+      vertex   662 690 0
+      vertex   872 848 0
+      vertex   449 734 0
+    endloop
+  endfacet
+  facet normal 0 0 0
+    outer loop
+      vertex   229 302 0
+      vertex   396 448 0
+      vertex   555 171 0
+    endloop
+  endfacet
+endsolid Default
