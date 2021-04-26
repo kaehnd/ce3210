@@ -2,7 +2,7 @@
  * @ Author: Daniel Kaehn
  * @ Course: CS 3210 011
  * @ Modified by: Daniel Kaehn
- * @ Modified time: 2021-04-22 00:25:42
+ * @ Modified time: 2021-04-22 11:42:30
  * @ Description:
  */
 
@@ -11,19 +11,20 @@
 
 #include "drawbase.h"
 #include "image.h"
+#include "vcontext.h"
 #include <unordered_set>
 
 // forward reference
 class GraphicsContext;
 
-class eventDrawingInterface : public DrawingBase
+class eventDrawingInterface : public DrawingBase 
 {
 
   public:
     /**
      * @brief  Constructs the object
      */
-    eventDrawingInterface();
+    eventDrawingInterface(GraphicsContext * gc);
 
     /**
      * @brief Destructor
@@ -80,6 +81,7 @@ class eventDrawingInterface : public DrawingBase
 
   private:
     image im;
+    ViewContext *vc;
 
     // thought about using polymorphism for this...
     // started to use polymorphism for this...

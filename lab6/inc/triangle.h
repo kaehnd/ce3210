@@ -2,7 +2,7 @@
  * @ Author: Daniel Kaehn
  * @ Course: CS 3210 011
  * @ Modified by: Daniel Kaehn
- * @ Modified time: 2021-04-21 22:08:31
+ * @ Modified time: 2021-04-25 20:11:33
  * @ Description: Triangle shape class
  */
 
@@ -63,7 +63,7 @@ class triangle : public shape
      * @brief  Draw this shape in the provided context
      * @param  context: context to draw in
      */
-    virtual void draw(GraphicsContext *context) const;
+    virtual void draw(GraphicsContext *gc, ViewContext *vc);
 
     /**
      * @brief  Inserts triangle into ostream in Text STL facet format

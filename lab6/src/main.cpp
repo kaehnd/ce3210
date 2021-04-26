@@ -2,7 +2,7 @@
  * @ Author: Daniel Kaehn
  * @ Course: CS 3210 011
  * @ Modified by: Daniel Kaehn
- * @ Modified time: 2021-04-22 00:35:19
+ * @ Modified time: 2021-04-22 09:48:29
  * @ Description: Test driver of basic graphics context functionality
  */
 
@@ -16,7 +16,9 @@ int main(void)
 {
     GraphicsContext *gc = new X11Context(800, 600, GraphicsContext::BLACK);
 
-    eventDrawingInterface interface;
+    
+
+    eventDrawingInterface interface(gc);
     gc->runLoop(&interface);
 
     delete gc;

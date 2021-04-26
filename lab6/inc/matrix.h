@@ -152,6 +152,11 @@ class matrix
     //
     matrix(unsigned int rows, unsigned int cols);
 
+    matrix(unsigned int rows, unsigned int cols, std::initializer_list<double> values);
+
+  //  matrix(unsigned int rows, unsigned int cols, std::initializer_list<double> values);
+
+
     // Copy constructor - make a new Matrix just like rhs
     matrix(const matrix &from);
 

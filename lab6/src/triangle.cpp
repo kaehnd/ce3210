@@ -2,7 +2,7 @@
  * @ Author: Daniel Kaehn
  * @ Course: CS 3210 011
  * @ Modified by: Daniel Kaehn
- * @ Modified time: 2021-04-21 22:08:28
+ * @ Modified time: 2021-04-25 20:11:41
  * @ Description: Implementation of triangle class
  */
 
@@ -47,16 +47,16 @@ triangle &triangle::operator=(triangle &other)
 }
 
 // Draw this triangle
-void triangle::draw(GraphicsContext *context) const
+void triangle::draw(GraphicsContext *gc, ViewContext *vc)
 {
-    shape::draw(context);
+    shape::draw(gc, vc);
 
-    context->drawLine(getCoordinates()[0][0], getCoordinates()[1][0],
-                      getCoordinates()[0][1], getCoordinates()[1][1]);
-    context->drawLine(getCoordinates()[0][1], getCoordinates()[1][1],
-                      getCoordinates()[0][2], getCoordinates()[1][2]);
-    context->drawLine(getCoordinates()[0][0], getCoordinates()[1][0],
-                      getCoordinates()[0][2], getCoordinates()[1][2]);
+    gc->drawLine(getCoordinates()[0][0], getCoordinates()[1][0],
+                 getCoordinates()[0][1], getCoordinates()[1][1]);
+    gc->drawLine(getCoordinates()[0][1], getCoordinates()[1][1],
+                 getCoordinates()[0][2], getCoordinates()[1][2]);
+    gc->drawLine(getCoordinates()[0][0], getCoordinates()[1][0],
+                 getCoordinates()[0][2], getCoordinates()[1][2]);
 }
 
 // Outputs to STL
@@ -80,10 +80,10 @@ triangle *triangle::clone() const
 void triangle::setCoordinates(double x0, double y0, double x1, double y1,
                               double x2, double y2)
 {
-    getCoordinates()[0][0] = x0;
-    getCoordinates()[1][0] = y0;
-    getCoordinates()[0][1] = x1;
-    getCoordinates()[1][1] = y1;
-    getCoordinates()[0][2] = x2;
-    getCoordinates()[1][2] = y2;
+    getBaseCoordinates()[0][0] = x0;
+    getBaseCoordinates()[1][0] = y0;
+    getBaseCoordinates()[0][1] = x1;
+    getBaseCoordinates()[1][1] = y1;
+    getBaseCoordinates()[0][2] = x2;
+    getBaseCoordinates()[1][2] = y2;
 }

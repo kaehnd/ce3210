@@ -2,7 +2,7 @@
  * @ Author: Daniel Kaehn
  * @ Course: CS 3210 011
  * @ Modified by: Daniel Kaehn
- * @ Modified time: 2021-04-21 22:08:46
+ * @ Modified time: 2021-04-25 20:15:12
  * @ Description: Implements functionality of line class
  */
 
@@ -49,7 +49,7 @@ class line : public shape
      * @brief  Draws this line using the given context
      * @param  context: GraphicsContext to draw in
      */
-    virtual void draw(GraphicsContext *context) const;
+    virtual void draw(GraphicsContext *gc, ViewContext *vc);
 
     // NOT SUPPORTED, THROWS EXCEPTION
     virtual void out(std::ostream &outstr) const;

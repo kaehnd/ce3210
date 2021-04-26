@@ -2,7 +2,7 @@
  * @ Author: Daniel Kaehn
  * @ Course: CS 3210 011
  * @ Modified by: Daniel Kaehn
- * @ Modified time: 2021-04-21 22:09:11
+ * @ Modified time: 2021-04-25 20:15:07
  * @ Description: Implementation of line class
  */
 
@@ -34,11 +34,11 @@ line &line::operator=(line &other)
 }
 
 // Draws this in the provided context
-void line::draw(GraphicsContext *context) const
+void line::draw(GraphicsContext *gc, ViewContext *vc)
 {
-    shape::draw(context);
-    context->drawLine(getCoordinates()[0][0], getCoordinates()[1][0],
-                      getCoordinates()[0][1], getCoordinates()[1][1]);
+    shape::draw(gc, vc);
+    gc->drawLine(getCoordinates()[0][0], getCoordinates()[1][0],
+                 getCoordinates()[0][1], getCoordinates()[1][1]);
 }
 
 // not supported
@@ -61,8 +61,8 @@ line *line::clone() const
 
 void line::setCoordinates(double x0, double y0, double x1, double y1)
 {
-    getCoordinates()[0][0] = x0;
-    getCoordinates()[1][0] = y0;
-    getCoordinates()[0][1] = x1;
-    getCoordinates()[1][1] = y1;
+    getBaseCoordinates()[0][0] = x0;
+    getBaseCoordinates()[1][0] = y0;
+    getBaseCoordinates()[0][1] = x1;
+    getBaseCoordinates()[1][1] = y1;
 }

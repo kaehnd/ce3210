@@ -2,13 +2,14 @@
  * @ Author: Daniel Kaehn
  * @ Course: CS 3210 011
  * @ Modified by: Daniel Kaehn
- * @ Modified time: 2021-04-22 00:25:34
+ * @ Modified time: 2021-04-25 20:20:04
  * @ Description: Implementation of event handling
  */
 
 #include "eventDrawingInterface.h"
 #include "line.h"
 #include "triangle.h"
+#include "vcontext.h"
 #include <fstream>
 #include <iostream>
 #include <unordered_set>
@@ -19,10 +20,12 @@
 using namespace std;
 
 // Constructor
-eventDrawingInterface::eventDrawingInterface()
+eventDrawingInterface::eventDrawingInterface(GraphicsContext * gc)
     : points(2, 3), curNumPoints(0), numPointsToGet(3), // default to triangle
       curColor(GraphicsContext::CYAN)
 {
+    vc = new ViewContext(gc);
+
 }
 
 // Destructor
@@ -33,7 +36,7 @@ eventDrawingInterface::~eventDrawingInterface()
 // Re-draws current image
 void eventDrawingInterface::paint(GraphicsContext *gc)
 {
-    im.draw(gc);
+    im.draw(gc, vc);
 }
 
 // Called on keypress, implements actions
@@ -202,6 +205,7 @@ void eventDrawingInterface::saveImage()
     try
     {
         ofstream file(".svproj.stl");
+        
         im.out(file);
         file.close();
     }
@@ -223,7 +227,7 @@ void eventDrawingInterface::loadImage(GraphicsContext *gc)
     im.in(file, curColor);
     file.close();
     gc->clear();
-    im.draw(gc);
+    im.draw(gc, vc);
     cout << "Load successful!" << endl;
 }
 

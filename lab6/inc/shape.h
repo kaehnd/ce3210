@@ -2,7 +2,7 @@
  * @ Author: Daniel Kaehn
  * @ Course: CS 3210 011
  * @ Modified by: Daniel Kaehn
- * @ Modified time: 2021-04-12 19:59:47
+ * @ Modified time: 2021-04-25 20:08:57
  * @ Description:
  */
 
@@ -11,6 +11,7 @@
 
 #include "gcontext.h"
 #include "matrix.h"
+#include "vcontext.h"
 #include <iostream>
 
 // Class used to denote methods in inheriting shapes as unsupported
@@ -55,7 +56,7 @@ class shape
      * it handles the color of the shape
      * @param  context: GraphicsContext to draw on
      */
-    virtual void draw(GraphicsContext *context) const;
+    virtual void draw(GraphicsContext *gc, ViewContext * vc);
 
     /**
      * @brief  Inserts this shape into the ostream as text in the STL format as
@@ -91,13 +92,18 @@ class shape
      * @brief  Gets the coordinates matrix
      * @retval matrix object of shape's coordinates
      */
-    matrix &getCoordinates();
     const matrix &getCoordinates() const;
+
+    matrix &getBaseCoordinates();
+    const matrix & getBaseCoordinates() const;
 
   private:
     // coordinates matrix stores all coordinates of the shape in (x, y, z, 0)
     // format
-    matrix coordinates;
+    matrix baseCoordinates;
+
+    matrix transformedCoordinates;
+    
     // 24-bit RDB color
     unsigned int color;
     // number of vertices of this shape (also # columns of coordinate matrix)

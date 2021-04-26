@@ -2,7 +2,7 @@
  * @ Author: Daniel Kaehn
  * @ Course: CS 3210 011
  * @ Modified by: Daniel Kaehn
- * @ Modified time: 2021-04-21 23:41:55
+ * @ Modified time: 2021-04-25 20:18:46
  * @ Description: Implements functions for a collection of Shape objects
  */
 
@@ -50,7 +50,7 @@ class image
      * @param  *context:
      * @retval None
      */
-    void draw(GraphicsContext *context) const;
+    void draw(GraphicsContext *gc, ViewContext * vc);
 
     /**
      * @brief  Outputs all shapes as an STL file to the ostream

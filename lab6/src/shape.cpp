@@ -2,11 +2,12 @@
  * @ Author: Daniel Kaehn
  * @ Course: CS 3210 011
  * @ Modified by: Daniel Kaehn
- * @ Modified time: 2021-04-12 19:49:56
+ * @ Modified time: 2021-04-25 20:45:12
  * @ Description: Implementation of shape class
  */
 
 #include "shape.h"
+#include "vcontext.h"
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -15,13 +16,13 @@ using namespace std;
 
 // Constructor
 shape::shape(unsigned int color, unsigned int numVertices)
-    : coordinates(4, numVertices), color(color), vertices(numVertices)
+    : baseCoordinates(4, numVertices), transformedCoordinates(4, numVertices), color(color), vertices(numVertices)
 {
 }
 
 // Copy constructor
 shape::shape(const shape &other)
-    : coordinates(other.coordinates), color(other.color), vertices(other.vertices)
+    : baseCoordinates(other.baseCoordinates), transformedCoordinates(other.transformedCoordinates), color(other.color), vertices(other.vertices)
 {
 }
 
@@ -30,10 +31,11 @@ shape::~shape()
 {
 }
 
-// Draw the shape, base class just sets the color
-void shape::draw(GraphicsContext *context) const
+// Draw the shape, base class just sets the color and applies transformation
+void shape::draw(GraphicsContext *gc, ViewContext * vc)
 {
-    context->setColor(color);
+    gc->setColor(color);
+    transformedCoordinates = vc->modelToDevice(baseCoordinates);
 }
 
 // Output all coordinates as an STL facet
@@ -42,8 +44,8 @@ void shape::out(ostream &outstr) const
     outstr << "  facet normal 0 0 0" << endl << "    outer loop" << endl;
     for (unsigned int i = 0; i < vertices; i++)
     {
-        outstr << "      vertex   " << coordinates[0][i] << " "
-               << coordinates[1][i] << " " << coordinates[2][i] << endl;
+        outstr << "      vertex   " << baseCoordinates[0][i] << " "
+               << baseCoordinates[1][i] << " " << baseCoordinates[2][i] << endl;
     }
     outstr << "    endloop" << endl << "  endfacet" << endl;
 }
@@ -70,8 +72,8 @@ void shape::in(istream &instr)
             stream >> vertex;
             if (vertex == "vertex")
             {
-                stream >> coordinates[0][i] >> coordinates[1][i] >>
-                    coordinates[2][i];
+                stream >> baseCoordinates[0][i] >> baseCoordinates[1][i] >>
+                    baseCoordinates[2][i];
             }
             else
             {
@@ -85,20 +87,27 @@ void shape::in(istream &instr)
 // Assigns base class properties
 shape &shape::operator=(shape &other)
 {
-    coordinates = other.coordinates;
+    baseCoordinates = other.baseCoordinates;
     color = other.color;
     vertices = other.vertices;
     return *this;
 }
 
-// gets mutable reference to coordinates
-matrix &shape::getCoordinates()
+// gets immutable reference to transformed coordinates
+const matrix &shape::getCoordinates() const
 {
-    return coordinates;
+    return transformedCoordinates;
+}
+
+
+// gets mutable reference to coordinates
+matrix &shape::getBaseCoordinates()
+{
+    return baseCoordinates;
 }
 
 // gets immutable reference to coordinates
-const matrix &shape::getCoordinates() const
+const matrix &shape::getBaseCoordinates() const
 {
-    return coordinates;
+    return baseCoordinates;
 }

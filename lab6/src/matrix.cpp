@@ -2,7 +2,7 @@
  * @ Author: Daniel Kaehn
  * @ Course: CS 3210 011
  * @ Modified by: Daniel Kaehn
- * @ Modified time: 2021-04-12 11:03:30
+ * @ Modified time: 2021-04-25 21:20:08
  * @ Description: matrix class implementation
  */
 #include "matrix.h"
@@ -180,6 +180,28 @@ matrix::matrix(unsigned int rows, unsigned int cols)
     clear();
 }
 
+matrix::matrix(unsigned int rows, unsigned int cols,
+               std::initializer_list<double> values)
+    : matrixHeap(NULL), rows(NULL), cols(NULL), numRows(rows), numCols(cols)
+{
+    if (rows < 1 || cols < 1)
+    {
+        throw matrixException("Row and column counts of a matrix must be > 0");
+    }
+    initMatrixMemory();
+
+    if (values.size() == numRows * numCols)
+    {
+        memcpy(matrixHeap, values.begin(), numRows * numCols * sizeof(double));
+    }
+    else
+    {
+        throw matrixException(
+            "Initializer list size did not match size of matrix");
+    }
+}
+
+
 // Copy constructor
 matrix::matrix(const matrix &from)
     : matrixHeap(NULL), rows(NULL), cols(NULL), numRows(from.numRows),
@@ -188,6 +210,8 @@ matrix::matrix(const matrix &from)
     initMatrixMemory();
     memcpy(matrixHeap, from.matrixHeap, numRows * numCols * sizeof(double));
 }
+
+
 
 // Destructor
 matrix::~matrix()

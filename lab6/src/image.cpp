@@ -2,7 +2,7 @@
  * @ Author: Daniel Kaehn
  * @ Course: CS 3210 011
  * @ Modified by: Daniel Kaehn
- * @ Modified time: 2021-04-21 23:50:40
+ * @ Modified time: 2021-04-25 20:19:01
  * @ Description: Implementaiton of image class
  */
 #include "image.h"
@@ -54,11 +54,11 @@ void image::add(shape *shape)
 }
 
 // Draw all shapes
-void image::draw(GraphicsContext *context) const
+void image::draw(GraphicsContext *gc, ViewContext *vc)
 {
     for (shape *curShape : shapes)
     {
-        curShape->draw(context);
+        curShape->draw(gc, vc);
     }
 }
 
