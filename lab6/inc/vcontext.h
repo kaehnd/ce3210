@@ -22,10 +22,14 @@ class ViewContext
 
     virtual ~ViewContext();
 
+
+    virtual void resetTransformation();
+
     virtual void addRotation(double angle);
     virtual void addTranslation(double x, double y);
     virtual void addScaling(double s);
-    virtual void undoTransformation();
+    virtual void addFlipX();
+    virtual void addFlipY();
 
     virtual matrix modelToDevice(const matrix & coordinates);
     virtual matrix deviceToModel(const matrix & coordinates);
@@ -34,9 +38,14 @@ class ViewContext
   private:
 
     std::vector<matrix> transformations;
-    GraphicsContext * gc;
+    int windowHeight;
+    int windowWidth;
 
     matrix m;
     matrix mInv;
+
+
+    void postAddTransformation(const matrix & tran, const matrix & invTran);
+    void preAddTransformation(const matrix & tran, const matrix & invTran);
 };
 #endif // __VCONTEXT_H__

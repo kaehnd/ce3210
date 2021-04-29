@@ -2,7 +2,7 @@
  * @ Author: Daniel Kaehn
  * @ Course: CS 3210 011
  * @ Modified by: Daniel Kaehn
- * @ Modified time: 2021-04-25 20:20:04
+ * @ Modified time: 2021-04-28 12:41:28
  * @ Description: Implementation of event handling
  */
 
@@ -21,16 +21,22 @@ using namespace std;
 
 // Constructor
 eventDrawingInterface::eventDrawingInterface(GraphicsContext * gc)
-    : points(2, 3), curNumPoints(0), numPointsToGet(3), // default to triangle
+    : points(4, 3), curNumPoints(0), numPointsToGet(3), // default to triangle
       curColor(GraphicsContext::CYAN)
 {
     vc = new ViewContext(gc);
+
+    for (unsigned int i = 0; i < 3; i++)
+    {
+        points[3][i] = 1; //set bottom row to 1
+    }
 
 }
 
 // Destructor
 eventDrawingInterface::~eventDrawingInterface()
 {
+    delete vc;
 }
 
 // Re-draws current image
@@ -46,11 +52,9 @@ void eventDrawingInterface::keyDown(GraphicsContext *gc, unsigned int keycode)
     switch (keycode)
     {
     case 'l':
-        cout << "draw liness" << endl;
         numPointsToGet = 2;
         break;
     case 't':
-        cout << "draw triangless" << endl;
         numPointsToGet = 3;
         break;
     case KEY_ESC:
@@ -60,6 +64,10 @@ void eventDrawingInterface::keyDown(GraphicsContext *gc, unsigned int keycode)
         if (isKeyPressed(KEY_CTRL))
         {
             saveImage();
+        } else {
+            vc->addTranslation(0, -2);
+            gc->clear();
+            paint(gc);
         }
         break;
     case 'o':
@@ -73,6 +81,7 @@ void eventDrawingInterface::keyDown(GraphicsContext *gc, unsigned int keycode)
         {
             gc->clear();
             im.erase();
+            vc->resetTransformation();
         }
         break;
     case '1':
@@ -102,6 +111,65 @@ void eventDrawingInterface::keyDown(GraphicsContext *gc, unsigned int keycode)
     case '9':
         curColor = GraphicsContext::BLACK;
         break;
+    case 'w':
+        vc->addTranslation(0, 2);
+        gc->clear();
+        paint(gc);
+        break;
+    case 'a':
+        vc->addTranslation(-2, 0);
+        gc->clear();
+        paint(gc);
+        break;
+
+    case 'd':
+        vc->addTranslation(2, 0);
+        gc->clear();
+        paint(gc);
+        break;
+    case '=':
+        cout<<"ZOOOOM"<<endl;
+        if (isKeyPressed(KEY_CTRL))
+        {
+            vc->addScaling(1.2);
+            gc->clear();
+            paint(gc);
+        }
+        break;
+    case '-':
+        cout<<"ZOOM OUT"<<endl;
+        if (isKeyPressed(KEY_CTRL))
+        {
+            vc->addScaling(.8);
+            gc->clear();
+            paint(gc);
+        }
+        break;
+
+    case '.':
+        if (isKeyPressed(KEY_CTRL))
+        {
+            vc->addRotation(.1);
+            gc->clear();
+            paint(gc);
+        }
+        break;
+    case ',':
+        if (isKeyPressed(KEY_CTRL))
+        {
+            vc->addRotation(-.1);
+            gc->clear();
+            paint(gc);
+        }
+        break;
+    case 'r':
+        if (isKeyPressed(KEY_CTRL))
+        {
+            vc->resetTransformation();
+            gc->clear();
+            paint(gc);
+        }
+        break;        
     }
 }
 
@@ -128,13 +196,15 @@ void eventDrawingInterface::mouseButtonUp(GraphicsContext *gc,
 
         if (curNumPoints + 1 == numPointsToGet)
         {
+            matrix modelCoords = vc->deviceToModel(points);
+            // cout<<"model coordinates: "<<endl<<modelCoords<<endl<<endl;
             switch (numPointsToGet)
             {
             case 2:
-                im.add(new line(curColor, points));
+                im.add(new line(curColor, modelCoords));
                 break;
             case 3:
-                im.add(new triangle(curColor, points));
+                im.add(new triangle(curColor, modelCoords));
                 break;
             }
 
@@ -220,6 +290,7 @@ void eventDrawingInterface::saveImage()
 // Loads from hard-coded file
 void eventDrawingInterface::loadImage(GraphicsContext *gc)
 {
+    vc->resetTransformation();
     cout << "Loading.." << endl;
     fstream file(".svproj.stl");
 

@@ -2,21 +2,28 @@
 #include "gcontext.h"
 #include "matrix.h"
 
-#include "cmath"
+#include <cmath>
+#include <iostream>
 #define USE_MATH_DEFINES
 
+using namespace std;
+
+#define identityMatrix()           {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}    
+#define translationMatrix(x, y, z) { 1, 0, 0, x, 0,  1, 0, y, 0, 0, 1, z, 0, 0, 0, 1}
+#define scalingMatrix(s)           { s, 0, 0, 0, 0,  s, 0, 0, 0, 0, s, 0, 0, 0, 0, 1}
+#define flipXMatrix()              {-1, 0, 0, 0, 0,  1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
+#define flipYMatrix()              { 1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
+#define rotZMatrix(theta)          {cos(theta), -sin(theta), 0, 0, sin(theta), cos(theta), 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
 
 
-ViewContext::ViewContext(GraphicsContext *gc) : gc(gc), m(4, 4), mInv(4, 4)
+
+ViewContext::ViewContext(GraphicsContext *gc) : windowHeight(gc->getWindowHeight()), windowWidth(gc->getWindowWidth()), m(4, 4), mInv(4, 4)
 {
-    double x = 3.2;
-
-
-    matrix thing(4, 3, {3.0, 4.0, 1, x, x, x, 4, 5, 3});
+    resetTransformation();
 }
 
 ViewContext::ViewContext(const ViewContext &other)
-    : transformations(other.transformations), gc(other.gc), m(other.m),
+    : transformations(other.transformations), windowHeight(other.windowHeight), windowWidth(other.windowWidth), m(other.m),
       mInv(other.mInv)
 {
 }
@@ -25,28 +32,92 @@ ViewContext::~ViewContext()
 {
 }
 
+void ViewContext::resetTransformation() 
+{
+    matrix flip(4, 4, flipYMatrix());
+    m = flip;
+    mInv = flip;
+
+
+    double x = windowWidth/2.0;
+    double y = windowHeight/2.0;
+
+    postAddTransformation(matrix(4, 4, translationMatrix(x, y, 0)), matrix(4, 4, translationMatrix(-x, -y, 0)));
+
+}
+
 void ViewContext::addRotation(double angle)
 {
+    preAddTransformation(matrix(4, 4, rotZMatrix(angle)), matrix(4, 4, rotZMatrix(-angle)));
 }
 
 void ViewContext::addTranslation(double x, double y)
 {
+    // matrix tran(4, 4, translationMatrix(x, y, 0));
+    // cout<<tran<<endl;
+    // matrix invTran(4, 4, translationMatrix(-x, -y, 0));
+    // cout<<invTran<<endl;
+    // cout<<"m before translation: " <<endl <<m<<endl;
+    // m = tran * m;
+    // cout<<"m after translation: "<<endl<<m<<endl;
+    // cout<<"mInv before translation: " <<endl <<mInv<<endl;
+    
+    // mInv = mInv * invTran;
+    // cout<<"mInv after translation: " <<endl <<mInv<<endl;
+
+
+    preAddTransformation(matrix(4, 4, translationMatrix(x, y, 0)), matrix(4, 4, translationMatrix(-x, -y, 0)));
+
 }
 
 void ViewContext::addScaling(double s)
 {
+    preAddTransformation(matrix(4, 4, scalingMatrix(s)), matrix(4, 4, scalingMatrix(1/s)));
 }
 
-void ViewContext::undoTransformation()
+void ViewContext::addFlipX() 
 {
+  
 }
+
+void ViewContext::addFlipY() 
+{
+    
+}
+
 
 matrix ViewContext::modelToDevice(const matrix &coordinates)
 {
-    return m * coordinates;
+    cout<<"modelToDevice"<<endl;
+    cout<<"Before matrix: "<<endl<<coordinates<<endl;
+    cout<<"Transformation matrix: "<<endl<<m<<endl;
+
+    matrix toReturn = m * coordinates;
+    cout<<"After matrix: "<<endl<<toReturn<<endl;
+
+    return toReturn;
 }
 
 matrix ViewContext::deviceToModel(const matrix &coordinates)
 {
-    return mInv * coordinates;
+    cout<<"devicetoModel"<<endl;
+    cout<<"Before matrix: "<<endl<<coordinates<<endl;
+    cout<<"Transformation matrix: "<<endl<<mInv<<endl;
+
+    matrix toReturn = mInv * coordinates;
+    cout<<"After matrix: "<<endl<<toReturn<<endl;
+
+    return toReturn;
+}
+
+void ViewContext::postAddTransformation(const matrix & tran, const matrix & invTran) 
+{
+    m = tran * m;
+    mInv = mInv * invTran;
+}
+
+void ViewContext::preAddTransformation(const matrix & tran, const matrix & invTran) 
+{
+    m = m * tran;
+    mInv = invTran * mInv;    
 }

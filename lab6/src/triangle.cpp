@@ -2,7 +2,7 @@
  * @ Author: Daniel Kaehn
  * @ Course: CS 3210 011
  * @ Modified by: Daniel Kaehn
- * @ Modified time: 2021-04-25 20:11:41
+ * @ Modified time: 2021-04-28 11:06:45
  * @ Description: Implementation of triangle class
  */
 
@@ -25,7 +25,7 @@ triangle::triangle(unsigned int color, const matrix &values) : shape(color, 3)
 
 // Copy constructor
 triangle::triangle(const triangle &other) : shape(other)
-{
+{    
 }
 
 // Constructor from STL stream
