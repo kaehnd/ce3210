@@ -2,7 +2,7 @@
  * @ Author: Daniel Kaehn
  * @ Course: CS 3210 011
  * @ Modified by: Daniel Kaehn
- * @ Modified time: 2021-04-29 12:12:20
+ * @ Modified time: 2021-04-29 12:14:30
  * @ Description: Implements ViewContext wrapper around matrix for view
  * transformations
  */
@@ -131,10 +131,10 @@ void ViewContext::recalculateMatrices()
     //didn't bother with having any dynamic support for different orders of
     // different transofrmations... this is ugly, but it works
     m = translationMatrix(windowWidth / 2.0, windowHeight / 2.0, 0) *
-        flipYMatrix() * scalingMatrix(scale) * rotZMatrix(rotation) *
-        translationMatrix(transX, transY, transZ);
+        flipYMatrix() * scalingMatrix(scale) * 
+        translationMatrix(transX, transY, transZ) * rotZMatrix(rotation);
 
-    mInv = translationMatrix(-transX, -transY, -transZ) *
-           rotZMatrix(-rotation) * scalingMatrix(1 / scale) * flipYMatrix() *
+    mInv = rotZMatrix(-rotation) * translationMatrix(-transX, -transY, -transZ) *
+            scalingMatrix(1 / scale) * flipYMatrix() *
            translationMatrix(-windowWidth / 2.0, -windowHeight / 2.0, 0);
 }
