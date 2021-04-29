@@ -2,7 +2,7 @@
  * @ Author: Daniel Kaehn
  * @ Course: CS 3210 011
  * @ Modified by: Daniel Kaehn
- * @ Modified time: 2021-04-29 08:56:02
+ * @ Modified time: 2021-04-29 09:14:07
  * @ Description: Implements ViewContext wrapper around matrix for view
  * transformations
  */
@@ -106,12 +106,21 @@ matrix ViewContext::deviceToModel(const matrix &coordinates)
 
 void ViewContext::recalculateMatrices()
 {
-    m = translationMatrix(windowWidth / 2.0, windowHeight / 2.0, 0) *
-        flipYMatrix() * scalingMatrix(scale) *
-        translationMatrix(transX, transY, transZ) * rotZMatrix(rotation);
+    m = 
+            translationMatrix(windowWidth / 2.0, windowHeight / 2.0, 0) *
+            flipYMatrix() * 
+            scalingMatrix(scale) *
+            
+            rotZMatrix(rotation) *
+            translationMatrix(transX, transY, transZ) 
+            ;
 
-    mInv = rotZMatrix(-rotation) *
-           translationMatrix(-transX, -transY, -transZ) *
-           scalingMatrix(1 / scale) * flipYMatrix() *
-           translationMatrix(-windowWidth / 2.0, -windowHeight / 2.0, 0);
+    mInv = 
+            
+            translationMatrix(-transX, -transY, -transZ) *
+            rotZMatrix(-rotation) *
+            scalingMatrix(1 / scale) * 
+            flipYMatrix() *
+            translationMatrix(-windowWidth / 2.0, -windowHeight / 2.0, 0)
+            ;
 }
