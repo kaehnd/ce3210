@@ -2,7 +2,7 @@
  * @ Author: Daniel Kaehn
  * @ Course: CS 3210 011
  * @ Modified by: Daniel Kaehn
- * @ Modified time: 2021-04-28 12:41:28
+ * @ Modified time: 2021-04-29 08:56:20
  * @ Description: Implementation of event handling
  */
 
@@ -24,7 +24,7 @@ eventDrawingInterface::eventDrawingInterface(GraphicsContext * gc)
     : points(4, 3), curNumPoints(0), numPointsToGet(3), // default to triangle
       curColor(GraphicsContext::CYAN)
 {
-    vc = new ViewContext(gc);
+    vc = new ViewContext(gc->getWindowHeight(), gc->getWindowWidth());
 
     for (unsigned int i = 0; i < 3; i++)
     {
@@ -65,7 +65,7 @@ void eventDrawingInterface::keyDown(GraphicsContext *gc, unsigned int keycode)
         {
             saveImage();
         } else {
-            vc->addTranslation(0, -2);
+            vc->addTranslation(0, 4);
             gc->clear();
             paint(gc);
         }
@@ -112,18 +112,17 @@ void eventDrawingInterface::keyDown(GraphicsContext *gc, unsigned int keycode)
         curColor = GraphicsContext::BLACK;
         break;
     case 'w':
-        vc->addTranslation(0, 2);
+        vc->addTranslation(0, -4);
         gc->clear();
         paint(gc);
         break;
     case 'a':
-        vc->addTranslation(-2, 0);
+        vc->addTranslation(4, 0);
         gc->clear();
         paint(gc);
         break;
-
     case 'd':
-        vc->addTranslation(2, 0);
+        vc->addTranslation(-4, 0);
         gc->clear();
         paint(gc);
         break;
