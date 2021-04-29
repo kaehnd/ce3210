@@ -2,7 +2,7 @@
  * @ Author: Daniel Kaehn
  * @ Course: CS 3210 011
  * @ Modified by: Daniel Kaehn
- * @ Modified time: 2021-04-29 08:56:20
+ * @ Modified time: 2021-04-29 12:12:34
  * @ Description: Implementation of event handling
  */
 
@@ -130,7 +130,7 @@ void eventDrawingInterface::keyDown(GraphicsContext *gc, unsigned int keycode)
         cout<<"ZOOOOM"<<endl;
         if (isKeyPressed(KEY_CTRL))
         {
-            vc->addScaling(1.2);
+            vc->applyScaling(1.2);
             gc->clear();
             paint(gc);
         }
@@ -139,7 +139,7 @@ void eventDrawingInterface::keyDown(GraphicsContext *gc, unsigned int keycode)
         cout<<"ZOOM OUT"<<endl;
         if (isKeyPressed(KEY_CTRL))
         {
-            vc->addScaling(.8);
+            vc->applyScaling(.8);
             gc->clear();
             paint(gc);
         }

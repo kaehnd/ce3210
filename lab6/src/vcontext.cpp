@@ -2,7 +2,7 @@
  * @ Author: Daniel Kaehn
  * @ Course: CS 3210 011
  * @ Modified by: Daniel Kaehn
- * @ Modified time: 2021-04-29 09:14:07
+ * @ Modified time: 2021-04-29 12:12:20
  * @ Description: Implements ViewContext wrapper around matrix for view
  * transformations
  */
@@ -18,6 +18,7 @@
 
 using namespace std;
 
+//Macros to simplify creation of transformation matrices
 #define identityMatrix()                                                       \
     matrix(4, 4, {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1})
 #define translationMatrix(x, y, z)                                             \
@@ -33,14 +34,15 @@ using namespace std;
            {cos(theta), -sin(theta), 0, 0, sin(theta), cos(theta), 0, 0, 0, 0, \
             1, 0, 0, 0, 0, 1})
 
+//Constructor
 ViewContext::ViewContext(int windowHeight, int windowWidth)
-    : windowHeight(windowHeight), windowWidth(windowWidth),
-      m(4, 4), mInv(4, 4), rotation(0), transX(0), transY(0), transZ(0),
-      scale(0)
+    : windowHeight(windowHeight), windowWidth(windowWidth), m(4, 4), mInv(4, 4),
+      rotation(0), transX(0), transY(0), transZ(0), scale(0)
 {
     resetTransformation();
 }
 
+//Copy contstructor
 ViewContext::ViewContext(const ViewContext &other)
     : windowHeight(other.windowHeight), windowWidth(other.windowWidth),
       m(other.m), mInv(other.mInv), rotation(other.rotation),
@@ -48,10 +50,13 @@ ViewContext::ViewContext(const ViewContext &other)
 {
 }
 
+//Destructor - no dynamic memory
 ViewContext::~ViewContext()
 {
 }
 
+
+//Resets to base view transformation
 void ViewContext::resetTransformation()
 {
     rotation = 0;
@@ -61,12 +66,14 @@ void ViewContext::resetTransformation()
     recalculateMatrices();
 }
 
+//adds specified rotation
 void ViewContext::addRotation(double angle)
 {
     rotation += angle;
     recalculateMatrices();
 }
 
+//adds specified translation
 void ViewContext::addTranslation(double x, double y)
 {
     transX += x;
@@ -74,53 +81,60 @@ void ViewContext::addTranslation(double x, double y)
     recalculateMatrices();
 }
 
-void ViewContext::addScaling(double s)
+//Applies specified scalar
+void ViewContext::applyScaling(double s)
 {
     scale *= s;
     recalculateMatrices();
 }
 
+//convert model coordinates to device coordinates
 matrix ViewContext::modelToDevice(const matrix &coordinates)
 {
+#ifdef DEBUG_TRANSFORMATIONS
     cout << "modelToDevice" << endl;
     cout << "Before matrix: " << endl << coordinates << endl;
     cout << "Transformation matrix: " << endl << m << endl;
+#endif
 
     matrix toReturn = m * coordinates;
+
+#ifdef DEBUG_TRANSFORMATIONS
     cout << "After matrix: " << endl << toReturn << endl;
+#endif
 
     return toReturn;
 }
 
+//convert device coordinates to model coordinates
 matrix ViewContext::deviceToModel(const matrix &coordinates)
 {
+#ifdef DEBUG_TRANSFORMATIONS
     cout << "devicetoModel" << endl;
     cout << "Before matrix: " << endl << coordinates << endl;
     cout << "Transformation matrix: " << endl << mInv << endl;
+#endif
 
     matrix toReturn = mInv * coordinates;
+
+#ifdef DEBUG_TRANSFORMATIONS
     cout << "After matrix: " << endl << toReturn << endl;
+#endif
 
     return toReturn;
 }
 
+//Internal method to recalculate m and mInv
 void ViewContext::recalculateMatrices()
 {
-    m = 
-            translationMatrix(windowWidth / 2.0, windowHeight / 2.0, 0) *
-            flipYMatrix() * 
-            scalingMatrix(scale) *
-            
-            rotZMatrix(rotation) *
-            translationMatrix(transX, transY, transZ) 
-            ;
+    //Since we have predefined ways that the transformation will be applied
+    //didn't bother with having any dynamic support for different orders of
+    // different transofrmations... this is ugly, but it works
+    m = translationMatrix(windowWidth / 2.0, windowHeight / 2.0, 0) *
+        flipYMatrix() * scalingMatrix(scale) * rotZMatrix(rotation) *
+        translationMatrix(transX, transY, transZ);
 
-    mInv = 
-            
-            translationMatrix(-transX, -transY, -transZ) *
-            rotZMatrix(-rotation) *
-            scalingMatrix(1 / scale) * 
-            flipYMatrix() *
-            translationMatrix(-windowWidth / 2.0, -windowHeight / 2.0, 0)
-            ;
+    mInv = translationMatrix(-transX, -transY, -transZ) *
+           rotZMatrix(-rotation) * scalingMatrix(1 / scale) * flipYMatrix() *
+           translationMatrix(-windowWidth / 2.0, -windowHeight / 2.0, 0);
 }

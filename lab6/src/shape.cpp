@@ -2,7 +2,7 @@
  * @ Author: Daniel Kaehn
  * @ Course: CS 3210 011
  * @ Modified by: Daniel Kaehn
- * @ Modified time: 2021-04-28 12:10:53
+ * @ Modified time: 2021-04-29 09:37:59
  * @ Description: Implementation of shape class
  */
 
@@ -92,7 +92,6 @@ void shape::in(istream &instr)
         getline(instr, lineBuffer); // endfacet
     }
     cout<<"Loaded this: "<<endl<<baseCoordinates<<endl;
-
 }
 
 // Assigns base class properties
