@@ -6,9 +6,18 @@ declare -A src #src files already processed
 
 outFilename=$1
 
+rm -r -f ./testSub
+rm -f ./$outFilename.pdf
+rm -f ./$outFilename.zip
+mkdir -p tempFiles
+
+
 #add main.cpp first (it'd better exist)
 submitFiles="./src/main.cpp"
 src[$submitFiles]=1
+
+cp ./src/main.cpp ./tempFiles/main.cpp
+compileFiles="./main.cpp"
 
 #Add each inc/ header file if files exist in inc/ dir
 #and add the corresponding cpp files in order if they exist
@@ -17,13 +26,19 @@ if [ "$(ls -A $DIR)" ]; then
 
   for f in $DIR/*; do
     submitFiles="$submitFiles $f"
-
+    
     incFilename=$(basename -- "$f")
-    cppFilename="./src/${incFilename%.*}.cpp"
+    cp $f ./tempFiles/$incFilename
 
-    if test -f "$cppFilename"; then
-      src[$cppFilename]=1
-      submitFiles="$submitFiles $cppFilename"
+    cppFileName="${incFilename%.*}.cpp"
+    cppFilePath="./src/$cppFileName"
+
+    if test -f "$cppFilePath"; then
+      src[$cppFilePath]=1
+      submitFiles="$submitFiles $cppFilePath"
+      cp $cppFilePath ./tempFiles/$cppFileName
+      compileFiles="$compileFiles ./$cppFileName"
+
     fi
   done
 fi
@@ -36,17 +51,33 @@ if [ "$(ls -A $DIR)" ]; then
     if [ ${src["$f"]} -ne 1 ]; then
       src[$f]=1
       submitFiles="$submitFiles $f"
+      fileName=$(basename -- "$f")
+      cp $f ./tempFiles/$fileName
+      compileFiles="$compileFiles ./$fileName"
     fi
   done
 fi
 
-#Add Makefile last
-submitFiles="$submitFiles ./Makefile"
+cp ../Template_Makefile ./tempFiles/Makefile
+sed -i "s/<LABNAME>/$outFilename/" ./tempFiles/Makefile
+
+cd tempFiles
+echo -e "\n\nCreating $outFilename.zip... \n"
+zip "../$outFilename".zip ./*
+cd ..
+
+submitFiles="$submitFiles ./tempFiles/Makefile"
 
 echo -e "Creating $outFilename.pdf...\n"
 
 a2ps --pro=color --toc -E -1 --header="$outFilename" --line-numbers=1 \
   -l 90 -T 4 -o - $submitFiles | ps2pdfwr - "$outFilename".pdf
 
-echo -e "\n\nCreating $outFilename.zip... \n"
-zip "$outFilename".zip $submitFiles
+
+
+rm -r ./tempFiles
+echo -e "\nTesting Submission.."
+unzip ./$outFilename.zip -d ./testSub/
+cd ./testSub
+make
+valgrind ./$outFilename

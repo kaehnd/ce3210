@@ -4,6 +4,7 @@
 
 #include <cmath>
 #include <iostream>
+
 #define USE_MATH_DEFINES
 
 using namespace std;
@@ -53,18 +54,6 @@ void ViewContext::addRotation(double angle)
 
 void ViewContext::addTranslation(double x, double y)
 {
-    // matrix tran(4, 4, translationMatrix(x, y, 0));
-    // cout<<tran<<endl;
-    // matrix invTran(4, 4, translationMatrix(-x, -y, 0));
-    // cout<<invTran<<endl;
-    // cout<<"m before translation: " <<endl <<m<<endl;
-    // m = tran * m;
-    // cout<<"m after translation: "<<endl<<m<<endl;
-    // cout<<"mInv before translation: " <<endl <<mInv<<endl;
-    
-    // mInv = mInv * invTran;
-    // cout<<"mInv after translation: " <<endl <<mInv<<endl;
-
 
     preAddTransformation(matrix(4, 4, translationMatrix(x, y, 0)), matrix(4, 4, translationMatrix(-x, -y, 0)));
 

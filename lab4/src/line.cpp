@@ -2,7 +2,7 @@
  * @ Author: Daniel Kaehn
  * @ Course: CS 3210 011
  * @ Modified by: Daniel Kaehn
- * @ Modified time: 2021-04-21 22:09:11
+ * @ Modified time: 2021-04-12 11:03:04
  * @ Description: Implementation of line class
  */
 
@@ -14,11 +14,10 @@
 line::line(unsigned int color, double x0, double y0, double x1, double y1)
     : shape(color, 2)
 {
-}
-
-line::line(unsigned int color, const matrix &values) : shape(color, 2)
-{
-    setCoordinates(values[0][0], values[1][0], values[0][1], values[1][1]);
+    getCoordinates()[0][0] = x0;
+    getCoordinates()[1][0] = y0;
+    getCoordinates()[0][1] = x1;
+    getCoordinates()[1][1] = y1;
 }
 
 // Copy constructor
@@ -57,12 +56,4 @@ void line::in(const std::istream &instr)
 line *line::clone() const
 {
     return new line(*this);
-}
-
-void line::setCoordinates(double x0, double y0, double x1, double y1)
-{
-    getCoordinates()[0][0] = x0;
-    getCoordinates()[1][0] = y0;
-    getCoordinates()[0][1] = x1;
-    getCoordinates()[1][1] = y1;
 }

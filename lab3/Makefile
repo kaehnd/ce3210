@@ -9,7 +9,7 @@ SRCS := $(wildcard $(SRC_DIR)/*.cpp)
 OBJS := $(SRCS:%=$(BUILD_DIR)/%.o)
 DEPS := $(OBJS:.o=.d)
 
-FLAGS ?= -I$(INC_DIR) -Wall -g 
+FLAGS ?= -I$(INC_DIR) -Wall -Wextra -g 
 
 all: $(BUILD_DIR)/$(TARGET_EXEC)
 

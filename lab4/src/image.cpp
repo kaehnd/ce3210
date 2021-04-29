@@ -2,7 +2,7 @@
  * @ Author: Daniel Kaehn
  * @ Course: CS 3210 011
  * @ Modified by: Daniel Kaehn
- * @ Modified time: 2021-04-21 23:50:40
+ * @ Modified time: 2021-04-12 19:57:57
  * @ Description: Implementaiton of image class
  */
 #include "image.h"
@@ -75,14 +75,14 @@ void image::out(ostream &outstr) const
 }
 
 // Extract shapes from STL file
-void image::in(istream &instr, unsigned int color)
+void image::in(istream &instr)
 {
     string lineBuffer;
     getline(instr, lineBuffer);
 
     while (instr.peek() == ' ') // ASCII STL always uses spaces, not tabs
     {
-        shapes.push_back(new triangle(color, instr));
+        shapes.push_back(new triangle(GraphicsContext::BLUE, instr));
     }
 }
 

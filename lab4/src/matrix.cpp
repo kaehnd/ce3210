@@ -2,7 +2,7 @@
  * @ Author: Daniel Kaehn
  * @ Course: CS 3210 011
  * @ Modified by: Daniel Kaehn
- * @ Modified time: 2021-03-23 16:55:43
+ * @ Modified time: 2021-04-12 11:03:30
  * @ Description: matrix class implementation
  */
 #include "matrix.h"
@@ -32,7 +32,10 @@ matrix::matrixVector::matrixVector(double *values, int length, int stepSize)
 }
 
 // Destruct the vector. DOES NOT FREE PASSED EXTERNAL MEMORY (values )
-matrix::matrixVector::~matrixVector() { delete[] values; }
+matrix::matrixVector::~matrixVector()
+{
+    delete[] values;
+}
 
 // Takes sum of vector values
 double matrix::matrixVector::sum() const
@@ -187,7 +190,10 @@ matrix::matrix(const matrix &from)
 }
 
 // Destructor
-matrix::~matrix() { freeMatrixMemory(); }
+matrix::~matrix()
+{
+    freeMatrixMemory();
+}
 
 // Assignment operator
 matrix &matrix::operator=(const matrix &rhs)
@@ -207,7 +213,10 @@ matrix &matrix::operator=(const matrix &rhs)
 }
 
 // Named constructor (static)
-matrix matrix::identity(unsigned int size) { return matrix(size, size); }
+matrix matrix::identity(unsigned int size)
+{
+    return matrix(size, size);
+}
 
 // Binary operations
 matrix matrix::operator+(const matrix &rhs) const
@@ -383,4 +392,7 @@ std::ostream &operator<<(std::ostream &os, const matrix &rhs)
 }
 
 // Global scalar multiplication
-matrix operator*(const double scale, const matrix &rhs) { return rhs * scale; }
+matrix operator*(const double scale, const matrix &rhs)
+{
+    return rhs * scale;
+}

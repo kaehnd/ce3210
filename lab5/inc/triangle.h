@@ -2,7 +2,7 @@
  * @ Author: Daniel Kaehn
  * @ Course: CS 3210 011
  * @ Modified by: Daniel Kaehn
- * @ Modified time: 2021-04-12 10:41:08
+ * @ Modified time: 2021-04-21 22:08:31
  * @ Description: Triangle shape class
  */
 
@@ -28,6 +28,13 @@ class triangle : public shape
              double x2, double y2);
 
     /**
+     * @brief  Constructs a  triangle from a color and all coordinates
+     * @param  color: 24-bit RDB color
+     * @param  values: coordinates of triangle stored in a matrix
+     */
+    triangle(unsigned int color, const matrix &values);
+
+    /**
      * @brief  Copy constructor for triangle
      * @param  other: triangle to copy from
      */
@@ -47,7 +54,7 @@ class triangle : public shape
 
     /**
      * @brief  Deep copies all properties from other
-     * @param  other: triangle to copy from 
+     * @param  other: triangle to copy from
      * @retval reference to this
      */
     virtual triangle &operator=(triangle &other);
@@ -75,6 +82,10 @@ class triangle : public shape
      * @retval Copy of this
      */
     virtual triangle *clone() const;
+
+  private:
+    void setCoordinates(double x0, double y0, double x1, double y1, double x2,
+                        double y2);
 };
 
 #endif // __TRIANGLE_H__

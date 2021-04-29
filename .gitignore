@@ -1,4 +1,5 @@
 build/
+testSub/
 *.img
 *.bin
 *.pdf

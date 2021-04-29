@@ -2,108 +2,101 @@
  * @ Author: Daniel Kaehn
  * @ Course: CS 3210 011
  * @ Modified by: Daniel Kaehn
- * @ Modified time: 2021-04-01 09:30:02
+ * @ Modified time: 2021-04-15 08:13:55
  * @ Description: Test driver of basic graphics context functionality
  */
 
+#include "image.h"
+#include "line.h"
+#include "shape.h"
+#include "triangle.h"
 #include "x11context.h"
 #include <cmath> // for trig functions
+#include <fstream>
 #include <iostream>
+#include <ostream>
 #include <unistd.h>
-#define _USE_MATH_DEFINES // for M_PI
 
-static void drawPointAngleLengthLine(GraphicsContext *gc, int x, int y,
-                                     int length, int angleDegrees)
-{
-    gc->drawLine(x, y, x + cos(angleDegrees * M_PI / 180) * length,
-                 y + sin(angleDegrees * M_PI / 180) * length);
-}
+using namespace std;
 
+//Driver to ad-hoc test image class
 int main(void)
 {
     GraphicsContext *gc = new X11Context(800, 600, GraphicsContext::BLACK);
 
-    // fully test methods
+    image pic;
 
-    gc->drawCircle(300, 300, 100);
+    pic.add(new triangle(gc->CYAN, 0, 0, 50, 100, 100, 100));
+    pic.add(new triangle(gc->RED, 100, 100, 150, 200, 200, 200));
+    pic.add(new triangle(gc->CYAN, 500, 500, 550, 500, 600, 560));
+    pic.add(new triangle(gc->BLUE, 500, 0, 50, 500, 100, 100));
+    pic.add(new triangle(gc->CYAN, 300, 400, 150, 200, 600, 200));
+    pic.add(new triangle(gc->CYAN, 700, 700, 800, 800, 600, 560));
 
-    gc->drawLine(300, 300, 300, 400);
-    gc->drawLine(300, 300, 350, 400);
-    gc->drawLine(300, 300, 400, 400);
-    gc->drawLine(300, 300, 400, 350);
-
-    gc->drawLine(300, 300, 400, 300);
-    gc->drawLine(300, 300, 400, 250);
-    gc->drawLine(300, 300, 400, 200);
-    gc->drawLine(300, 300, 350, 200);
-
-    gc->drawLine(300, 300, 300, 200);
-    gc->drawLine(300, 300, 250, 200);
-    gc->drawLine(300, 300, 200, 200);
-    gc->drawLine(300, 300, 200, 250);
-
-    gc->drawLine(300, 300, 200, 300);
-    gc->drawLine(300, 300, 200, 350);
-    gc->drawLine(300, 300, 200, 400);
-    gc->drawLine(300, 300, 250, 400);
-
-    //test negative coordinates
-	gc->drawLine(-200, -2, 50, 50);
-	gc->drawCircle(-5, -5, 100);
+    cout << "Draw the original" << endl;
+    pic.draw(gc);
 
     sleep(3);
+
+    image pic2;
+    pic2 = pic;
+    pic.erase();
     gc->clear();
 
-    // loading...
-    for (int j = 0; j < 2; j++)
-    {
-        gc->setColor(GraphicsContext::WHITE);
-        for (int i = 0; i < 360; i++)
-        {
-            drawPointAngleLengthLine(gc, 300, 300, 100, i);
-            usleep(2000);
-        }
-        usleep(100000);
+    sleep(1);
 
-        gc->setColor(GraphicsContext::BLACK);
+    cout << "Draw assigned deep copy" << endl;
+    pic2.draw(gc);
 
-        for (int i = 0; i < 360; i++)
-        {
-            drawPointAngleLengthLine(gc, 300, 300, 100, i);
-            usleep(300);
-        }
+    sleep(3);
 
-        usleep(100);
-    }
+    image pic3(pic2);
+    pic2.erase();
+    gc->clear();
+
+    sleep(1);
+
+    cout << "Draw copy made from copy constructor" << endl;
+    pic3.draw(gc);
+
+    sleep(3);
+
+    std::ofstream fileout("./test.stl");
+    pic3.out(fileout);
+    fileout.close();
 
     gc->clear();
 
-    // draw something cool.. I suppose...
-    gc->setColor(GraphicsContext::YELLOW);
-    for (int i = 180; i >= 0; i--)
+    sleep(1);
+
+    std::fstream filein("./test.stl");
+    pic.in(filein);
+    cout << "Draw written and read from file" << endl;
+    pic.draw(gc);
+
+    sleep(2);
+
+    pic.erase();
+    gc->clear();
+
+    sleep(1);
+
+    pic.add(new line(gc->RED, 0, 0, 500, 500));
+    pic.add(new line(gc->MAGENTA, 600, 500, 200, 700));
+    pic.draw(gc);
+
+    sleep(2);
+
+    try
     {
-        drawPointAngleLengthLine(gc, 300, 300, 100, i);
-        drawPointAngleLengthLine(gc, 300, 300, 100, -i);
+        pic.out(cout);
+        cout<<"Expected exception writing out line to STL file"<<endl;
     }
-
-    for (int j = 0; j < 20; j++)
+    catch (unsupportedShapeOperationException &e)
     {
-        gc->setColor(GraphicsContext::BLACK);
-
-        for (int i = 0; i < 45; i++)
-        {
-            drawPointAngleLengthLine(gc, 300, 300, 100, i);
-            drawPointAngleLengthLine(gc, 300, 300, 100, -i);
-        }
-
-        gc->setColor(GraphicsContext::YELLOW);
-
-        for (int i = 44; i >= 0; i--)
-        {
-            drawPointAngleLengthLine(gc, 300, 300, 100, i);
-            drawPointAngleLengthLine(gc, 300, 300, 100, -i);
-        }
+        cout<<"Tested line::out throws exception"<<endl;
     }
+    
 
     delete gc;
     return 0;

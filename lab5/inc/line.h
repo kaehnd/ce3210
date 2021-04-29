@@ -2,7 +2,7 @@
  * @ Author: Daniel Kaehn
  * @ Course: CS 3210 011
  * @ Modified by: Daniel Kaehn
- * @ Modified time: 2021-04-12 10:41:19
+ * @ Modified time: 2021-04-21 22:08:46
  * @ Description: Implements functionality of line class
  */
 
@@ -24,6 +24,13 @@ class line : public shape
      * @param  y1: y1 coordinate
      */
     line(unsigned int color, double x0, double y0, double x1, double y1);
+
+    /**
+     * @brief  Constructs a line from all coordinates
+     * @param  color: 24-bit  RGB color
+     * @param  values: matrix containing coordinates of both points of line
+     */
+    line(unsigned int color, const matrix &values);
 
     /**
      * @brief  Copy constructor for line class
@@ -55,6 +62,9 @@ class line : public shape
      * @retval a copy of this line
      */
     virtual line *clone() const;
+
+  private:
+    void setCoordinates(double x0, double y0, double x1, double y1);
 };
 
 #endif // __LINE_H__

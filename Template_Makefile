@@ -1,0 +1,22 @@
+#Template Makefile generated for <LABNAME>
+SRCS := $(wildcard ./*.cpp)
+OBJS := $(SRCS:%=./%.o)
+DEPS := $(OBJS:.o=.d)
+
+LDFLAGS ?= -lX11
+FLAGS ?= -I$./ -Wall -g 
+
+all: ./<LABNAME>
+
+./<LABNAME>: $(OBJS)
+	g++ $(OBJS) -o $@ $(LDFLAGS)
+
+./%.cpp.o: %.cpp
+	g++ $(FLAGS) -c $< -o $@
+
+.PHONY: clean
+clean:
+	rm -f $(OBJS)
+	rm -f <LABNAME>
+
+-include $(DEPS)

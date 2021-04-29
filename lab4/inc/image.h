@@ -2,7 +2,7 @@
  * @ Author: Daniel Kaehn
  * @ Course: CS 3210 011
  * @ Modified by: Daniel Kaehn
- * @ Modified time: 2021-04-21 23:41:55
+ * @ Modified time: 2021-04-12 19:15:04
  * @ Description: Implements functions for a collection of Shape objects
  */
 
@@ -60,10 +60,10 @@ class image
 
     /**
      * @brief  Inputs shapes from an STL file in an istream
+     * @note   This will give shapes a default blue color
      * @param  instr: istream to extract from
-     * @param color: color to make all loaded triangles
      */
-    void in(std::istream &instr, unsigned int color = GraphicsContext::WHITE);
+    void in(std::istream &instr);
 
     /**
      * @brief  Remove and DELTE all shapes
