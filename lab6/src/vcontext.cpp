@@ -9,7 +9,7 @@
 
 using namespace std;
 
-#define identityMatrix()           {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}    
+#define identityMatrix()           {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
 #define translationMatrix(x, y, z) { 1, 0, 0, x, 0,  1, 0, y, 0, 0, 1, z, 0, 0, 0, 1}
 #define scalingMatrix(s)           { s, 0, 0, 0, 0,  s, 0, 0, 0, 0, s, 0, 0, 0, 0, 1}
 #define flipXMatrix()              {-1, 0, 0, 0, 0,  1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
@@ -49,29 +49,20 @@ void ViewContext::resetTransformation()
 
 void ViewContext::addRotation(double angle)
 {
-    preAddTransformation(matrix(4, 4, rotZMatrix(angle)), matrix(4, 4, rotZMatrix(-angle)));
+    rotation = angle;
 }
 
 void ViewContext::addTranslation(double x, double y)
 {
-
-    preAddTransformation(matrix(4, 4, translationMatrix(x, y, 0)), matrix(4, 4, translationMatrix(-x, -y, 0)));
-
+    transX+=x;
+    transY+=y;
+    recalculateMatrices();
 }
 
 void ViewContext::addScaling(double s)
 {
-    preAddTransformation(matrix(4, 4, scalingMatrix(s)), matrix(4, 4, scalingMatrix(1/s)));
-}
-
-void ViewContext::addFlipX() 
-{
-  
-}
-
-void ViewContext::addFlipY() 
-{
-    
+    scale*=s;
+    recalculateMatrices();
 }
 
 
@@ -108,5 +99,8 @@ void ViewContext::postAddTransformation(const matrix & tran, const matrix & invT
 void ViewContext::preAddTransformation(const matrix & tran, const matrix & invTran) 
 {
     m = m * tran;
-    mInv = invTran * mInv;    
+    mInv = invTran * mInv;
+    transformations.insert()
 }
+
+
