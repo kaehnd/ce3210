@@ -2,7 +2,7 @@
  * @ Author: Daniel Kaehn
  * @ Course: CS 3210 011
  * @ Modified by: Daniel Kaehn
- * @ Modified time: 2021-04-29 09:37:59
+ * @ Modified time: 2021-04-29 12:16:29
  * @ Description: Implementation of shape class
  */
 
@@ -49,7 +49,6 @@ void shape::draw(GraphicsContext *gc, ViewContext *vc)
 // Output all coordinates as an STL facet
 void shape::out(ostream &outstr) const
 {
-    cout<<"Saving this: "<<endl<<baseCoordinates<<endl;
     outstr << "  facet normal 0 0 0" << endl << "    outer loop" << endl;
     for (unsigned int i = 0; i < vertices; i++)
     {
@@ -91,7 +90,6 @@ void shape::in(istream &instr)
         }
         getline(instr, lineBuffer); // endfacet
     }
-    cout<<"Loaded this: "<<endl<<baseCoordinates<<endl;
 }
 
 // Assigns base class properties

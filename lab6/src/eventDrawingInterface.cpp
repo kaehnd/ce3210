@@ -2,7 +2,7 @@
  * @ Author: Daniel Kaehn
  * @ Course: CS 3210 011
  * @ Modified by: Daniel Kaehn
- * @ Modified time: 2021-04-29 12:12:34
+ * @ Modified time: 2021-04-29 12:17:36
  * @ Description: Implementation of event handling
  */
 
@@ -20,7 +20,7 @@
 using namespace std;
 
 // Constructor
-eventDrawingInterface::eventDrawingInterface(GraphicsContext * gc)
+eventDrawingInterface::eventDrawingInterface(GraphicsContext *gc)
     : points(4, 3), curNumPoints(0), numPointsToGet(3), // default to triangle
       curColor(GraphicsContext::CYAN)
 {
@@ -28,9 +28,8 @@ eventDrawingInterface::eventDrawingInterface(GraphicsContext * gc)
 
     for (unsigned int i = 0; i < 3; i++)
     {
-        points[3][i] = 1; //set bottom row to 1
+        points[3][i] = 1; // set bottom row to 1
     }
-
 }
 
 // Destructor
@@ -64,7 +63,9 @@ void eventDrawingInterface::keyDown(GraphicsContext *gc, unsigned int keycode)
         if (isKeyPressed(KEY_CTRL))
         {
             saveImage();
-        } else {
+        }
+        else
+        {
             vc->addTranslation(0, 4);
             gc->clear();
             paint(gc);
@@ -127,7 +128,6 @@ void eventDrawingInterface::keyDown(GraphicsContext *gc, unsigned int keycode)
         paint(gc);
         break;
     case '=':
-        cout<<"ZOOOOM"<<endl;
         if (isKeyPressed(KEY_CTRL))
         {
             vc->applyScaling(1.2);
@@ -136,7 +136,6 @@ void eventDrawingInterface::keyDown(GraphicsContext *gc, unsigned int keycode)
         }
         break;
     case '-':
-        cout<<"ZOOM OUT"<<endl;
         if (isKeyPressed(KEY_CTRL))
         {
             vc->applyScaling(.8);
@@ -168,7 +167,7 @@ void eventDrawingInterface::keyDown(GraphicsContext *gc, unsigned int keycode)
             gc->clear();
             paint(gc);
         }
-        break;        
+        break;
     }
 }
 
@@ -274,7 +273,7 @@ void eventDrawingInterface::saveImage()
     try
     {
         ofstream file(".svproj.stl");
-        
+
         im.out(file);
         file.close();
     }
