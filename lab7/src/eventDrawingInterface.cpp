@@ -2,12 +2,11 @@
  * @ Author: Daniel Kaehn
  * @ Course: CS 3210 011
  * @ Modified by: Daniel Kaehn
- * @ Modified time: 2021-04-29 12:17:36
+ * @ Modified time: 2021-05-04 11:00:21
  * @ Description: Implementation of event handling
  */
 
 #include "eventDrawingInterface.h"
-#include "line.h"
 #include "triangle.h"
 #include "vcontext.h"
 #include <fstream>
@@ -199,7 +198,6 @@ void eventDrawingInterface::mouseButtonUp(GraphicsContext *gc,
             switch (numPointsToGet)
             {
             case 2:
-                im.add(new line(curColor, modelCoords));
                 break;
             case 3:
                 im.add(new triangle(curColor, modelCoords));
