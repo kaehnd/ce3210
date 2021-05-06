@@ -18,7 +18,7 @@ $(BUILD_DIR)/$(TARGET_EXEC): $(OBJS)
 
 $(BUILD_DIR)/%.cpp.o: %.cpp
 	mkdir -p $(dir $@)
-	g++ $(FLAGS) -c $< -o $@
+	g++ $(FLAGS) -c $< -o $@ # -D DEBUG_TRANSFORMATIONS
 
 .PHONY: clean
 clean:

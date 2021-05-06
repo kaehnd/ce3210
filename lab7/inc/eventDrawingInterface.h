@@ -93,6 +93,7 @@ class eventDrawingInterface : public DrawingBase
 
     unsigned int curColor;
     std::unordered_set<unsigned int> pressedKeys;
+    bool isMouseLeftClicked, isMouseMiddleClicked, isMouseRightClicked;
 
     // undraws/draws lines between most recent point, second-most recent point,
     // and beginning point

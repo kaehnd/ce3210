@@ -12,6 +12,7 @@
 
 #include "gcontext.h"
 #include "matrix.h"
+#include "vector3d.h"
 #include <vector>
 
 class ViewContext
@@ -44,7 +45,9 @@ class ViewContext
      * @brief  Adds the specified rotation to the ViewContext
      * @param  angle: Angle in radians to add
      */
-    virtual void addRotation(double angle);
+    virtual void addHorizontalOrb(double angle);
+    virtual void addVerticalOrb(double angle);
+
 
     /**
      * @brief  Adds the specified translation to the ViewContext
@@ -80,13 +83,22 @@ class ViewContext
     matrix m;
     matrix mInv;
 
-    double rotation;
+
     double transX, transY, transZ;
     double scale;
+
+
+    vector3d N;
+    double orbH, orbV;
+    double radius;
+  //  double focusX, focusY, focusZ; assume origin for now
 
     /**
      * @brief  Internal method to recalculate m and mInv
      */
     void recalculateMatrices();
+
+
+    matrix create3dRotationFromUnitVectors(vector3d u, vector3d v, vector3d n);
 };
 #endif // __VCONTEXT_H__

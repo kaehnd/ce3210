@@ -2,7 +2,7 @@
  * @ Author: Daniel Kaehn
  * @ Course: CS 3210 011
  * @ Modified by: Daniel Kaehn
- * @ Modified time: 2021-05-04 11:00:21
+ * @ Modified time: 2021-05-05 22:36:26
  * @ Description: Implementation of event handling
  */
 
@@ -21,7 +21,7 @@ using namespace std;
 // Constructor
 eventDrawingInterface::eventDrawingInterface(GraphicsContext *gc)
     : points(4, 3), curNumPoints(0), numPointsToGet(3), // default to triangle
-      curColor(GraphicsContext::CYAN)
+      curColor(GraphicsContext::CYAN), isMouseLeftClicked(false), isMouseMiddleClicked(false), isMouseRightClicked(false)
 {
     vc = new ViewContext(gc->getWindowHeight(), gc->getWindowWidth());
 
@@ -47,16 +47,11 @@ void eventDrawingInterface::paint(GraphicsContext *gc)
 void eventDrawingInterface::keyDown(GraphicsContext *gc, unsigned int keycode)
 {
     pressedKeys.insert(keycode);
+    // cout<<"keypress: "<<keycode<<endl;
     switch (keycode)
     {
-    case 'l':
-        numPointsToGet = 2;
-        break;
-    case 't':
-        numPointsToGet = 3;
-        break;
+
     case KEY_ESC:
-        abandonDrawing(gc);
         break;
     case 's':
         if (isKeyPressed(KEY_CTRL))
@@ -146,15 +141,18 @@ void eventDrawingInterface::keyDown(GraphicsContext *gc, unsigned int keycode)
     case '.':
         if (isKeyPressed(KEY_CTRL))
         {
-            vc->addRotation(.1);
+            // vc->addRotation(.1);
+            vc->addHorizontalOrb(.1);
             gc->clear();
             paint(gc);
         }
+
         break;
     case ',':
         if (isKeyPressed(KEY_CTRL))
         {
-            vc->addRotation(-.1);
+            // vc->addRotation(-.1);
+            vc->addVerticalOrb(.1);
             gc->clear();
             paint(gc);
         }
@@ -180,88 +178,65 @@ void eventDrawingInterface::keyUp(GraphicsContext *gc, unsigned int keycode)
 void eventDrawingInterface::mouseButtonDown(GraphicsContext *gc,
                                             unsigned int button, int x, int y)
 {
+    cout<<"Mouse down: "<<button<<endl;
+    switch (button)
+    {
+        case 1:
+            isMouseLeftClicked = true;
+            break;
+        case 2:
+            isMouseMiddleClicked = true;
+            break;
+        case 3:
+            isMouseRightClicked = true;
+            break;
+        case 4:
+            if (isKeyPressed(KEY_CTRL))
+            {
+                vc->applyScaling(1.2);
+                gc->clear();
+                paint(gc);
+            }
+            break;
+        case 5:
+            if (isKeyPressed(KEY_CTRL))
+            {
+                vc->applyScaling(.8);
+                gc->clear();
+                paint(gc);
+            }
+            break;
+    }
 }
 
 // called on mouse unclick
 void eventDrawingInterface::mouseButtonUp(GraphicsContext *gc,
                                           unsigned int button, int x, int y)
 {
-    if (curNumPoints > 0)
+    cout<<"Mouse up: " << button<<endl;
+    switch (button)
     {
-        points[0][curNumPoints] = x;
-        points[1][curNumPoints] = y;
-
-        if (curNumPoints + 1 == numPointsToGet)
-        {
-            matrix modelCoords = vc->deviceToModel(points);
-            // cout<<"model coordinates: "<<endl<<modelCoords<<endl<<endl;
-            switch (numPointsToGet)
-            {
-            case 2:
-                break;
-            case 3:
-                im.add(new triangle(curColor, modelCoords));
-                break;
-            }
-
-            curNumPoints = 0;
-            gc->setMode(GraphicsContext::MODE_NORMAL);
-        }
-        else
-        {
-            progressivelyDrawLinearShape(gc);
-            curNumPoints++;
-            points[0][curNumPoints] = x;
-            points[1][curNumPoints] = y;
-        }
+        case 1:
+            isMouseLeftClicked = false;
+            break;
+        case 2:
+            isMouseMiddleClicked = false;
+            break;
+        case 3:
+            isMouseRightClicked = false;
+            break;
     }
-    else
-    {
-        points[0][curNumPoints] = points[0][curNumPoints + 1] = x;
-        points[1][curNumPoints] = points[1][curNumPoints + 1] = y;
-        gc->setMode(GraphicsContext::MODE_XOR);
-        curNumPoints = 1;
-    }
+
 }
 
 // called on mouse move, implements rubberbanding
 void eventDrawingInterface::mouseMove(GraphicsContext *gc, int x, int y)
 {
-    if (curNumPoints > 0)
-    {
-        progressivelyDrawLinearShape(gc);
-        points[0][curNumPoints] = x;
-        points[1][curNumPoints] = y;
-        progressivelyDrawLinearShape(gc);
-    }
+
 }
 
-// undraws/draws lines between most recent point, second-most recent point, and
-// beginning point
-void eventDrawingInterface::progressivelyDrawLinearShape(GraphicsContext *gc)
-{
-    gc->setColor(curColor);
-    gc->drawLine(points[0][curNumPoints - 1], points[1][curNumPoints - 1],
-                 points[0][curNumPoints], points[1][curNumPoints]);
 
-    if (curNumPoints > 1)
-    {
-        gc->drawLine(points[0][0], points[1][0], points[0][curNumPoints],
-                     points[1][curNumPoints]);
-    }
-}
 
-// stops drawing, called when ESC is pressed
-void eventDrawingInterface::abandonDrawing(GraphicsContext *gc)
-{
-    while (curNumPoints > 0)
-    {
-        progressivelyDrawLinearShape(gc);
-        curNumPoints--;
-        gc->setPixel(points[0][curNumPoints], points[1][curNumPoints]);
-    }
-    gc->setMode(GraphicsContext::MODE_NORMAL);
-}
 
 // Saves to hard-coded file
 void eventDrawingInterface::saveImage()

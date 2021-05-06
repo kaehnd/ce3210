@@ -2,9 +2,9 @@
  * @ Author: Daniel Kaehn
  * @ Course: CS 3210 011
  * @ Modified by: Daniel Kaehn
- * @ Modified time: 2021-04-29 12:14:30
+ * @ Modified time: 2021-05-05 22:36:17
  * @ Description: Implements ViewContext wrapper around matrix for view
- * transformations
+ * @ Modified by: Daniel Kaehn
  */
 
 #include "vcontext.h"
@@ -16,9 +16,11 @@
 
 #define USE_MATH_DEFINES
 
+#define ROT_DEFAULT 0
+
 using namespace std;
 
-//Macros to simplify creation of transformation matrices
+// Macros to simplify creation of transformation matrices
 #define identityMatrix()                                                       \
     matrix(4, 4, {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1})
 #define translationMatrix(x, y, z)                                             \
@@ -34,46 +36,55 @@ using namespace std;
            {cos(theta), -sin(theta), 0, 0, sin(theta), cos(theta), 0, 0, 0, 0, \
             1, 0, 0, 0, 0, 1})
 
-//Constructor
+// Constructor
 ViewContext::ViewContext(int windowHeight, int windowWidth)
     : windowHeight(windowHeight), windowWidth(windowWidth), m(4, 4), mInv(4, 4),
-      rotation(0), transX(0), transY(0), transZ(0), scale(0)
+      transX(0), transY(0), transZ(0), scale(0), N(0, 0, 0), orbH(ROT_DEFAULT), orbV(ROT_DEFAULT), radius(10)
 {
     resetTransformation();
 }
 
-//Copy contstructor
+// Copy contstructor
 ViewContext::ViewContext(const ViewContext &other)
     : windowHeight(other.windowHeight), windowWidth(other.windowWidth),
-      m(other.m), mInv(other.mInv), rotation(other.rotation),
-      transX(other.transX), transY(other.transY), transZ(other.transZ)
+      m(other.m), mInv(other.mInv), 
+      transX(other.transX), transY(other.transY), transZ(other.transZ),
+      N(other.N)
 {
 }
 
-//Destructor - no dynamic memory
+// Destructor - no dynamic memory
 ViewContext::~ViewContext()
 {
 }
 
-
-//Resets to base view transformation
+// Resets to base view transformation
 void ViewContext::resetTransformation()
 {
-    rotation = 0;
+    orbH = ROT_DEFAULT;
+    orbV = ROT_DEFAULT;
+
     transX = transY = transZ = 0;
     scale = 1;
 
     recalculateMatrices();
 }
 
-//adds specified rotation
-void ViewContext::addRotation(double angle)
+void ViewContext::addHorizontalOrb(double angle) 
 {
-    rotation += angle;
+    orbH+=angle;
     recalculateMatrices();
 }
 
-//adds specified translation
+void ViewContext::addVerticalOrb(double angle) 
+{
+    orbV+=angle;
+    recalculateMatrices();
+}
+
+
+
+// adds specified translation
 void ViewContext::addTranslation(double x, double y)
 {
     transX += x;
@@ -81,14 +92,14 @@ void ViewContext::addTranslation(double x, double y)
     recalculateMatrices();
 }
 
-//Applies specified scalar
+// Applies specified scalar
 void ViewContext::applyScaling(double s)
 {
     scale *= s;
     recalculateMatrices();
 }
 
-//convert model coordinates to device coordinates
+// convert model coordinates to device coordinates
 matrix ViewContext::modelToDevice(const matrix &coordinates)
 {
 #ifdef DEBUG_TRANSFORMATIONS
@@ -106,7 +117,7 @@ matrix ViewContext::modelToDevice(const matrix &coordinates)
     return toReturn;
 }
 
-//convert device coordinates to model coordinates
+// convert device coordinates to model coordinates
 matrix ViewContext::deviceToModel(const matrix &coordinates)
 {
 #ifdef DEBUG_TRANSFORMATIONS
@@ -124,17 +135,49 @@ matrix ViewContext::deviceToModel(const matrix &coordinates)
     return toReturn;
 }
 
-//Internal method to recalculate m and mInv
+// Internal method to recalculate m and mInv
 void ViewContext::recalculateMatrices()
 {
-    //Since we have predefined ways that the transformation will be applied
-    //didn't bother with having any dynamic support for different orders of
+    // Since we have predefined ways that the transformation will be applied
+    // didn't bother with having any dynamic support for different orders of
     // different transofrmations... this is ugly, but it works
-    m = translationMatrix(windowWidth / 2.0, windowHeight / 2.0, 0) *
-        flipYMatrix() * scalingMatrix(scale) * 
-        translationMatrix(transX, transY, transZ) * rotZMatrix(rotation);
 
-    mInv = rotZMatrix(-rotation) * translationMatrix(-transX, -transY, -transZ) *
-            scalingMatrix(1 / scale) * flipYMatrix() *
-           translationMatrix(-windowWidth / 2.0, -windowHeight / 2.0, 0);
+    N.x = radius * cos(orbH) * sin(orbV);
+    N.y = radius * sin(orbH) * sin(orbV);
+    N.z = radius * cos(orbV);
+
+    cout << N;
+    vector3d ref(0, 1, 0);
+    vector3d n = N.normalize();
+
+    vector3d u = ref.cross(n);
+    vector3d v = n.cross(u);
+
+    matrix rot = create3dRotationFromUnitVectors(u, v, n);
+    matrix rotInv = create3dRotationFromUnitVectors(
+        vector3d(1, 0, 0), vector3d(0, 1, 0), vector3d(0, 0, 1));
+
+    m = translationMatrix(windowWidth / 2.0, windowHeight / 2.0, 0) *
+        flipYMatrix() * 
+        scalingMatrix(scale) *
+        translationMatrix(transX, transY, transZ) *
+ //       rotZMatrix(rotation) * 
+        rot *
+        translationMatrix(-N.x, -N.y, -N.z);
+
+    mInv = translationMatrix(N.x, N.y, N.z) * 
+        rotInv * 
+//        rotZMatrix(-rotation) *
+        translationMatrix(-transX, -transY, -transZ) *
+        scalingMatrix(1 / scale) * 
+        flipYMatrix() *
+        translationMatrix(-windowWidth / 2.0, -windowHeight / 2.0, 0);
+}
+
+matrix ViewContext::create3dRotationFromUnitVectors(vector3d u, vector3d v,
+                                                    vector3d n)
+{
+    return matrix(
+        4, 4,
+        {u.x, v.x, n.x, 0, u.y, v.y, n.y, 0, u.z, v.z, n.z, 0, 0, 0, 0, 1});
 }
