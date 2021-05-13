@@ -22,7 +22,8 @@ using namespace std;
 // Constructor
 eventDrawingInterface::eventDrawingInterface(GraphicsContext *gc)
     : points(4, 3), curNumPoints(0), numPointsToGet(3), // default to triangle
-      curColor(GraphicsContext::CYAN), isMouseLeftClicked(false), isMouseMiddleClicked(false), isMouseRightClicked(false)
+      curColor(GraphicsContext::CYAN), isMouseLeftClicked(false),
+      isMouseMiddleClicked(false), isMouseRightClicked(false)
 {
     vc = new ViewContext(gc->getWindowHeight(), gc->getWindowWidth());
 
@@ -42,9 +43,10 @@ eventDrawingInterface::~eventDrawingInterface()
 void eventDrawingInterface::paint(GraphicsContext *gc)
 {
     gc->clear();
-    triangle(gc->RED,0, 0, 0, 100, 0, 0, 0, 0, 0).draw(gc, vc);
-    triangle(gc->BLUE,0, 0, 0, 0, 100, 0, 0, 0, 0).draw(gc, vc);
-    triangle(gc->GREEN,0, 0, 0, 0, 0, 100, 0, 0, 0).draw(gc, vc);
+    vc->setCenter(gc->getWindowHeight(), gc->getWindowWidth());
+    triangle(gc->RED, 0, 0, 0, 100, 0, 0, 0, 0, 0).draw(gc, vc);
+    triangle(gc->BLUE, 0, 0, 0, 0, 100, 0, 0, 0, 0).draw(gc, vc);
+    triangle(gc->GREEN, 0, 0, 0, 0, 0, 100, 0, 0, 0).draw(gc, vc);
 
     im.draw(gc, vc);
 }
@@ -53,7 +55,7 @@ void eventDrawingInterface::paint(GraphicsContext *gc)
 void eventDrawingInterface::keyDown(GraphicsContext *gc, unsigned int keycode)
 {
     pressedKeys.insert(keycode);
-    //cout<<"keypress: "<<keycode<<endl;
+    // cout<<"keypress: "<<keycode<<endl;
     switch (keycode)
     {
     case KEY_ESC:
@@ -201,32 +203,32 @@ void eventDrawingInterface::keyUp(GraphicsContext *gc, unsigned int keycode)
 void eventDrawingInterface::mouseButtonDown(GraphicsContext *gc,
                                             unsigned int button, int x, int y)
 {
-    cout<<"Mouse down: "<<button<<endl;
+    // cout<<"Mouse down: "<<button<<endl;
     switch (button)
     {
-        case 1:
-            isMouseLeftClicked = true;
-            break;
-        case 2:
-            isMouseMiddleClicked = true;
-            break;
-        case 3:
-            isMouseRightClicked = true;
-            break;
-        case 4:
-            if (isKeyPressed(KEY_CTRL))
-            {
-                vc->applyScaling(1.2);
-                paint(gc);
-            }
-            break;
-        case 5:
-            if (isKeyPressed(KEY_CTRL))
-            {
-                vc->applyScaling(.8);
-                paint(gc);
-            }
-            break;
+    case 1:
+        isMouseLeftClicked = true;
+        break;
+    case 2:
+        isMouseMiddleClicked = true;
+        break;
+    case 3:
+        isMouseRightClicked = true;
+        break;
+    case 4:
+        if (isKeyPressed(KEY_CTRL))
+        {
+            vc->applyScaling(1.2);
+            paint(gc);
+        }
+        break;
+    case 5:
+        if (isKeyPressed(KEY_CTRL))
+        {
+            vc->applyScaling(.8);
+            paint(gc);
+        }
+        break;
     }
 }
 
@@ -234,30 +236,25 @@ void eventDrawingInterface::mouseButtonDown(GraphicsContext *gc,
 void eventDrawingInterface::mouseButtonUp(GraphicsContext *gc,
                                           unsigned int button, int x, int y)
 {
-    //cout<<"Mouse up: " << button<<endl;
+    // cout<<"Mouse up: " << button<<endl;
     switch (button)
     {
-        case 1:
-            isMouseLeftClicked = false;
-            break;
-        case 2:
-            isMouseMiddleClicked = false;
-            break;
-        case 3:
-            isMouseRightClicked = false;
-            break;
+    case 1:
+        isMouseLeftClicked = false;
+        break;
+    case 2:
+        isMouseMiddleClicked = false;
+        break;
+    case 3:
+        isMouseRightClicked = false;
+        break;
     }
-
 }
 
 // called on mouse move, implements rubberbanding
 void eventDrawingInterface::mouseMove(GraphicsContext *gc, int x, int y)
 {
-
 }
-
-
-
 
 // Saves to hard-coded file
 void eventDrawingInterface::saveImage()

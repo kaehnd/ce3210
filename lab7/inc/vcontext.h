@@ -1,6 +1,3 @@
-#ifndef __VCONTEXT_H__
-#define __VCONTEXT_H__
-
 /**
  * @ Author: Daniel Kaehn
  * @ Course: CS 3210 011
@@ -9,6 +6,10 @@
  * @ Description: ViewContext class to represent transofrmations between device
  * and model coordinates
  */
+
+#ifndef __VCONTEXT_H__
+#define __VCONTEXT_H__
+
 
 #include "gcontext.h"
 #include "matrix.h"
@@ -24,6 +25,8 @@ class ViewContext
      * @param  windowWidth: width in pixels of view
      */
     ViewContext(int windowHeight, int windowWidth);
+
+    void setCenter(int windowHeight, int windowWidth);
 
     /**
      * @brief  Copy constructor for ViewContext
@@ -47,7 +50,6 @@ class ViewContext
      */
     virtual void addHorizontalOrb(double angle);
     virtual void addVerticalOrb(double angle);
-
 
     /**
      * @brief  Adds the specified translation to the ViewContext
@@ -78,22 +80,19 @@ class ViewContext
     matrix m;
     matrix mInv;
 
-
     double transX, transY, transZ;
     double scale;
-
 
     vector3d N;
     double orbH, orbV;
     double radius;
     double fovDistance;
-  //  double focusX, focusY, focusZ; assume origin for now
+    //  double focusX, focusY, focusZ; assume origin for now
 
     /**
      * @brief  Internal method to recalculate m and mInv
      */
     void recalculateMatrices();
-
 
     matrix create3dRotationFromUnitVectors(vector3d u, vector3d v, vector3d n);
 };

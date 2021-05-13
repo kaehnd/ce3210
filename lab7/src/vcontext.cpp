@@ -17,7 +17,7 @@
 #define USE_MATH_DEFINES
 
 #define ROT_DEFAULT M_PI_4
-#define FOV_DEFAULT 1000
+#define FOV_DEFAULT 300
 
 using namespace std;
 
@@ -36,8 +36,8 @@ using namespace std;
     matrix(4, 4,                                                               \
            {cos(theta), -sin(theta), 0, 0, sin(theta), cos(theta), 0, 0, 0, 0, \
             1, 0, 0, 0, 0, 1})
-#define projectionMatrix(zf)                                                       \
-    matrix(4, 4, {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, -1.0/zf, 1})
+#define projectionMatrix(zf)                                                   \
+    matrix(4, 4, {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, -1.0 / zf, 1})
 // Constructor
 ViewContext::ViewContext(int windowHeight, int windowWidth)
     : windowHeight(windowHeight), windowWidth(windowWidth), m(4, 4), mInv(4, 4),
@@ -53,6 +53,12 @@ ViewContext::ViewContext(const ViewContext &other)
       m(other.m), mInv(other.mInv), transX(other.transX), transY(other.transY),
       transZ(other.transZ), N(other.N), fovDistance(other.fovDistance)
 {
+}
+void ViewContext::setCenter(int windowHeight, int windowWidth)
+{
+    this->windowHeight = windowHeight;
+    this->windowWidth = windowWidth;
+    recalculateMatrices();
 }
 
 // Destructor - no dynamic memory
@@ -88,7 +94,8 @@ void ViewContext::addVerticalOrb(double angle)
 }
 void ViewContext::addFov(double amount)
 {
-    fovDistance+=amount;
+    fovDistance += amount;
+    cout << fovDistance;
     recalculateMatrices();
 }
 
@@ -127,7 +134,6 @@ matrix ViewContext::modelToDevice(const matrix &coordinates)
 
     return toReturn;
 }
-
 
 // Internal method to recalculate m and mInv
 void ViewContext::recalculateMatrices()
@@ -189,17 +195,8 @@ void ViewContext::recalculateMatrices()
     m = translationMatrix(windowWidth / 2.0, windowHeight / 2.0, 0) *
         flipYMatrix() * scalingMatrix(scale) *
         translationMatrix(transX, transY, transZ) *
-        //       rotZMatrix(rotation) *
-       projectionMatrix(fovDistance) *
-        rot * translationMatrix(-N.x, -N.y, -N.z);
-
-    //     mInv = translationMatrix(N.x, N.y, N.z) *
-    //         rotInv *
-    //        rotZMatrix(-rotation) *
-    //         translationMatrix(-transX, -transY, -transZ) *
-    //         scalingMatrix(1 / scale) *
-    //         flipYMatrix() *
-    //         translationMatrix(-windowWidth / 2.0, -windowHeight / 2.0, 0);
+        projectionMatrix(fovDistance) * rot *
+        translationMatrix(-N.x, -N.y, -N.z);
 }
 
 matrix ViewContext::create3dRotationFromUnitVectors(vector3d u, vector3d v,
