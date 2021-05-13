@@ -2,7 +2,7 @@
  * @ Author: Daniel Kaehn
  * @ Course: CS 3210 011
  * @ Modified by: Daniel Kaehn
- * @ Modified time: 2021-04-22 11:42:30
+ * @ Modified time: 2021-05-12 20:06:22
  * @ Description:
  */
 
@@ -95,12 +95,6 @@ class eventDrawingInterface : public DrawingBase
     std::unordered_set<unsigned int> pressedKeys;
     bool isMouseLeftClicked, isMouseMiddleClicked, isMouseRightClicked;
 
-    // undraws/draws lines between most recent point, second-most recent point,
-    // and beginning point
-    void progressivelyDrawLinearShape(GraphicsContext *gc);
-
-    // stops drawing, called when ESC is pressed
-    void abandonDrawing(GraphicsContext *gc);
 
     // Saves to hard-coded file
     void saveImage();

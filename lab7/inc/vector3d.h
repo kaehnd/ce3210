@@ -2,7 +2,8 @@
 class vector3d
 {
 public:
-    
+    vector3d();
+
     vector3d(double x, double y, double z);
 
 
@@ -18,6 +19,8 @@ public:
     vector3d operator/(double scale) const;
 
     vector3d operator=(const vector3d & other);
+
+    bool operator==(const vector3d & other);
 
     double x, y, z;
 

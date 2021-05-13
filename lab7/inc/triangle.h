@@ -2,7 +2,7 @@
  * @ Author: Daniel Kaehn
  * @ Course: CS 3210 011
  * @ Modified by: Daniel Kaehn
- * @ Modified time: 2021-04-25 20:11:33
+ * @ Modified time: 2021-05-12 12:32:11
  * @ Description: Triangle shape class
  */
 
@@ -24,8 +24,8 @@ class triangle : public shape
      * @param  x2: x2 coordinate
      * @param  y2: y2 coordinate
      */
-    triangle(unsigned int color, double x0, double y0, double x1, double y1,
-             double x2, double y2);
+    triangle(unsigned int color, double x0, double y0, double z0, double x1, double y1, double z1,
+             double x2, double y2, double z2);
 
     /**
      * @brief  Constructs a  triangle from a color and all coordinates
@@ -84,8 +84,8 @@ class triangle : public shape
     virtual triangle *clone() const;
 
   private:
-    void setCoordinates(double x0, double y0, double x1, double y1, double x2,
-                        double y2);
+    void setCoordinates(double x0, double y0, double z0, double x1, double y1, double z1, double x2,
+                        double y2, double z2);
 };
 
 #endif // __TRIANGLE_H__

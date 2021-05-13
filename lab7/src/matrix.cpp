@@ -2,7 +2,7 @@
  * @ Author: Daniel Kaehn
  * @ Course: CS 3210 011
  * @ Modified by: Daniel Kaehn
- * @ Modified time: 2021-04-25 21:20:08
+ * @ Modified time: 2021-05-12 20:26:16
  * @ Description: matrix class implementation
  */
 #include "matrix.h"
@@ -309,6 +309,22 @@ matrix matrix::operator~() const
 void matrix::clear()
 {
     memset(matrixHeap, 0, numRows * numCols * sizeof(double));
+}
+
+matrix matrix::divColByRow(int rowNum) const
+{
+    if (rowNum > numRows)
+    {
+        throw matrixException("rowNum outside of matrix bounds");
+    }
+
+    matrix toReturn(*this);
+
+    for (unsigned int i = 0; i < numCols; i++)
+    {
+        (*toReturn.cols[i])*=(1/(*toReturn.cols[i])[rowNum]);
+    }
+    return toReturn;
 }
 
 // Get row

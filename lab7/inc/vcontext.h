@@ -69,12 +69,7 @@ class ViewContext
      */
     virtual matrix modelToDevice(const matrix &coordinates);
 
-    /**
-     * @brief  Convert device coordinates to model coordinates
-     * @param  coordinates: matrix of device coordinates
-     * @retval matrix of model coordinates
-     */
-    virtual matrix deviceToModel(const matrix &coordinates);
+    void addFov(double amount);
 
   private:
     int windowHeight;
@@ -91,6 +86,7 @@ class ViewContext
     vector3d N;
     double orbH, orbV;
     double radius;
+    double fovDistance;
   //  double focusX, focusY, focusZ; assume origin for now
 
     /**

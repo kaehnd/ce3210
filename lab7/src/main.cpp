@@ -2,7 +2,7 @@
  * @ Author: Daniel Kaehn
  * @ Course: CS 3210 011
  * @ Modified by: Daniel Kaehn
- * @ Modified time: 2021-04-22 09:48:29
+ * @ Modified time: 2021-05-12 12:36:22
  * @ Description: Test driver of basic graphics context functionality
  */
 
@@ -19,6 +19,7 @@ int main(void)
     
 
     eventDrawingInterface interface(gc);
+    interface.paint(gc);
     gc->runLoop(&interface);
 
     delete gc;

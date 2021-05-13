@@ -2,7 +2,7 @@
  * @ Author: Daniel Kaehn
  * @ Course: CS 3210 011
  * @ Modified by: Daniel Kaehn
- * @ Modified time: 2021-05-05 22:36:17
+ * @ Modified time: 2021-05-12 20:44:27
  * @ Description: Implements ViewContext wrapper around matrix for view
  * @ Modified by: Daniel Kaehn
  */
@@ -16,7 +16,8 @@
 
 #define USE_MATH_DEFINES
 
-#define ROT_DEFAULT 0
+#define ROT_DEFAULT M_PI_4
+#define FOV_DEFAULT 1000
 
 using namespace std;
 
@@ -35,11 +36,13 @@ using namespace std;
     matrix(4, 4,                                                               \
            {cos(theta), -sin(theta), 0, 0, sin(theta), cos(theta), 0, 0, 0, 0, \
             1, 0, 0, 0, 0, 1})
-
+#define projectionMatrix(zf)                                                       \
+    matrix(4, 4, {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, -1.0/zf, 1})
 // Constructor
 ViewContext::ViewContext(int windowHeight, int windowWidth)
     : windowHeight(windowHeight), windowWidth(windowWidth), m(4, 4), mInv(4, 4),
-      transX(0), transY(0), transZ(0), scale(0), N(0, 0, 0), orbH(ROT_DEFAULT), orbV(ROT_DEFAULT), radius(10)
+      transX(0), transY(0), transZ(0), scale(0), N(0, 0, 0), orbH(ROT_DEFAULT),
+      orbV(ROT_DEFAULT), radius(10), fovDistance(FOV_DEFAULT)
 {
     resetTransformation();
 }
@@ -47,9 +50,8 @@ ViewContext::ViewContext(int windowHeight, int windowWidth)
 // Copy contstructor
 ViewContext::ViewContext(const ViewContext &other)
     : windowHeight(other.windowHeight), windowWidth(other.windowWidth),
-      m(other.m), mInv(other.mInv), 
-      transX(other.transX), transY(other.transY), transZ(other.transZ),
-      N(other.N)
+      m(other.m), mInv(other.mInv), transX(other.transX), transY(other.transY),
+      transZ(other.transZ), N(other.N), fovDistance(other.fovDistance)
 {
 }
 
@@ -66,23 +68,29 @@ void ViewContext::resetTransformation()
 
     transX = transY = transZ = 0;
     scale = 1;
+    fovDistance = FOV_DEFAULT;
 
     recalculateMatrices();
 }
 
-void ViewContext::addHorizontalOrb(double angle) 
+void ViewContext::addHorizontalOrb(double angle)
 {
-    orbH+=angle;
+    orbH += angle;
+    orbH = fmod(2 * M_PI + fmod(orbH, 2 * M_PI), 2 * M_PI);
     recalculateMatrices();
 }
 
-void ViewContext::addVerticalOrb(double angle) 
+void ViewContext::addVerticalOrb(double angle)
 {
-    orbV+=angle;
+    orbV += angle;
+    orbV = fmod(2 * M_PI + fmod(orbV, 2 * M_PI), 2 * M_PI);
     recalculateMatrices();
 }
-
-
+void ViewContext::addFov(double amount)
+{
+    fovDistance+=amount;
+    recalculateMatrices();
+}
 
 // adds specified translation
 void ViewContext::addTranslation(double x, double y)
@@ -109,6 +117,9 @@ matrix ViewContext::modelToDevice(const matrix &coordinates)
 #endif
 
     matrix toReturn = m * coordinates;
+    // cout<<toReturn<<endl;
+    toReturn = toReturn.divColByRow(3);
+    // cout<<toReturn<<endl;
 
 #ifdef DEBUG_TRANSFORMATIONS
     cout << "After matrix: " << endl << toReturn << endl;
@@ -117,23 +128,6 @@ matrix ViewContext::modelToDevice(const matrix &coordinates)
     return toReturn;
 }
 
-// convert device coordinates to model coordinates
-matrix ViewContext::deviceToModel(const matrix &coordinates)
-{
-#ifdef DEBUG_TRANSFORMATIONS
-    cout << "devicetoModel" << endl;
-    cout << "Before matrix: " << endl << coordinates << endl;
-    cout << "Transformation matrix: " << endl << mInv << endl;
-#endif
-
-    matrix toReturn = mInv * coordinates;
-
-#ifdef DEBUG_TRANSFORMATIONS
-    cout << "After matrix: " << endl << toReturn << endl;
-#endif
-
-    return toReturn;
-}
 
 // Internal method to recalculate m and mInv
 void ViewContext::recalculateMatrices()
@@ -142,36 +136,70 @@ void ViewContext::recalculateMatrices()
     // didn't bother with having any dynamic support for different orders of
     // different transofrmations... this is ugly, but it works
 
-    N.x = radius * cos(orbH) * sin(orbV);
-    N.y = radius * sin(orbH) * sin(orbV);
-    N.z = radius * cos(orbV);
+    N.x = radius * sin(orbH) * cos(orbV);
+    N.y = radius * sin(orbV);
+    N.z = radius * cos(orbH) * cos(orbV);
 
-    cout << N;
-    vector3d ref(0, 1, 0);
+    // cout<<orbH<<endl;
+    // cout << orbV << endl;
+
+    // cout << N;
     vector3d n = N.normalize();
 
-    vector3d u = ref.cross(n);
-    vector3d v = n.cross(u);
+    // double divPi = orbV / M_PI * 2;
+    // double mod = fmod(divPi, 2);
+    // double absolute = abs(mod);
+    // double minus1 = absolute - 1;
+    // bool isIllegalView = minus1 < 0.05 && minus1 > -0.05;
+
+    vector3d u, v, ref;
+
+    // cout<<"divPi: " <<divPi<<endl;
+    // cout<< "minus1: " << minus1 << endl;
+    // cout<<"is illegal: " << isIllegalView<< endl;
+    // if (!isIllegalView)
+    // {
+    //     vector3d ref = vector3d(0, 1, 0);
+    //     u = ref.cross(n).normalize();
+    //     v = n.cross(u);
+    // }
+    // else {
+
+    if (orbV > M_PI_2 && orbV < 3 * M_PI_2)
+    {
+        ref = vector3d(0, -1, 0);
+    }
+    else
+    {
+        ref = vector3d(0, 1, 0);
+    }
+    u = ref.cross(n).normalize();
+    v = n.cross(u);
+    // }
+
+    // cout << "N: " << N << endl
+    //      << "u: " << u << endl
+    //      << "v: " << v << endl
+    //      << "n: " << n << endl;
 
     matrix rot = create3dRotationFromUnitVectors(u, v, n);
     matrix rotInv = create3dRotationFromUnitVectors(
         vector3d(1, 0, 0), vector3d(0, 1, 0), vector3d(0, 0, 1));
 
     m = translationMatrix(windowWidth / 2.0, windowHeight / 2.0, 0) *
-        flipYMatrix() * 
-        scalingMatrix(scale) *
+        flipYMatrix() * scalingMatrix(scale) *
         translationMatrix(transX, transY, transZ) *
- //       rotZMatrix(rotation) * 
-        rot *
-        translationMatrix(-N.x, -N.y, -N.z);
+        //       rotZMatrix(rotation) *
+       projectionMatrix(fovDistance) *
+        rot * translationMatrix(-N.x, -N.y, -N.z);
 
-    mInv = translationMatrix(N.x, N.y, N.z) * 
-        rotInv * 
-//        rotZMatrix(-rotation) *
-        translationMatrix(-transX, -transY, -transZ) *
-        scalingMatrix(1 / scale) * 
-        flipYMatrix() *
-        translationMatrix(-windowWidth / 2.0, -windowHeight / 2.0, 0);
+    //     mInv = translationMatrix(N.x, N.y, N.z) *
+    //         rotInv *
+    //        rotZMatrix(-rotation) *
+    //         translationMatrix(-transX, -transY, -transZ) *
+    //         scalingMatrix(1 / scale) *
+    //         flipYMatrix() *
+    //         translationMatrix(-windowWidth / 2.0, -windowHeight / 2.0, 0);
 }
 
 matrix ViewContext::create3dRotationFromUnitVectors(vector3d u, vector3d v,
@@ -179,5 +207,7 @@ matrix ViewContext::create3dRotationFromUnitVectors(vector3d u, vector3d v,
 {
     return matrix(
         4, 4,
-        {u.x, v.x, n.x, 0, u.y, v.y, n.y, 0, u.z, v.z, n.z, 0, 0, 0, 0, 1});
+        //       {u.x, v.x, n.x, 0, u.y, v.y, n.y, 0, u.z, v.z, n.z, 0, 0, 0, 0,
+        //       1});
+        {u.x, u.y, u.z, 0, v.x, v.y, v.z, 0, n.x, n.y, n.z, 0, 0, 0, 0, 1});
 }

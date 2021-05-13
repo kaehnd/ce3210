@@ -203,11 +203,15 @@ class matrix
     // someMatrixObject * 5.0, but not 5.0 * someMatrixObject.
     matrix operator*(const double scale) const;
 
+
     // Transpose of a Matrix - should always work, hence no exception
     matrix operator~() const;
 
     // Clear Matrix to all members 0.0
     void clear();
+
+
+    matrix divColByRow(int rowNum) const;
 
     // Access Operators - throw an exception if index out of range
     //

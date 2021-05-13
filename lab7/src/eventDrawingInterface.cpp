@@ -2,7 +2,7 @@
  * @ Author: Daniel Kaehn
  * @ Course: CS 3210 011
  * @ Modified by: Daniel Kaehn
- * @ Modified time: 2021-05-05 22:36:26
+ * @ Modified time: 2021-05-12 20:33:56
  * @ Description: Implementation of event handling
  */
 
@@ -15,6 +15,7 @@
 
 #define KEY_CTRL 65507
 #define KEY_ESC 65307
+#define KEY_SHIFT 65505
 
 using namespace std;
 
@@ -40,6 +41,11 @@ eventDrawingInterface::~eventDrawingInterface()
 // Re-draws current image
 void eventDrawingInterface::paint(GraphicsContext *gc)
 {
+    gc->clear();
+    triangle(gc->RED,0, 0, 0, 100, 0, 0, 0, 0, 0).draw(gc, vc);
+    triangle(gc->BLUE,0, 0, 0, 0, 100, 0, 0, 0, 0).draw(gc, vc);
+    triangle(gc->GREEN,0, 0, 0, 0, 0, 100, 0, 0, 0).draw(gc, vc);
+
     im.draw(gc, vc);
 }
 
@@ -47,10 +53,9 @@ void eventDrawingInterface::paint(GraphicsContext *gc)
 void eventDrawingInterface::keyDown(GraphicsContext *gc, unsigned int keycode)
 {
     pressedKeys.insert(keycode);
-    // cout<<"keypress: "<<keycode<<endl;
+    //cout<<"keypress: "<<keycode<<endl;
     switch (keycode)
     {
-
     case KEY_ESC:
         break;
     case 's':
@@ -61,7 +66,6 @@ void eventDrawingInterface::keyDown(GraphicsContext *gc, unsigned int keycode)
         else
         {
             vc->addTranslation(0, 4);
-            gc->clear();
             paint(gc);
         }
         break;
@@ -74,9 +78,9 @@ void eventDrawingInterface::keyDown(GraphicsContext *gc, unsigned int keycode)
     case 'n':
         if (isKeyPressed(KEY_CTRL))
         {
-            gc->clear();
             im.erase();
             vc->resetTransformation();
+            paint(gc);
         }
         break;
     case '1':
@@ -108,24 +112,20 @@ void eventDrawingInterface::keyDown(GraphicsContext *gc, unsigned int keycode)
         break;
     case 'w':
         vc->addTranslation(0, -4);
-        gc->clear();
         paint(gc);
         break;
     case 'a':
         vc->addTranslation(4, 0);
-        gc->clear();
         paint(gc);
         break;
     case 'd':
         vc->addTranslation(-4, 0);
-        gc->clear();
         paint(gc);
         break;
     case '=':
         if (isKeyPressed(KEY_CTRL))
         {
             vc->applyScaling(1.2);
-            gc->clear();
             paint(gc);
         }
         break;
@@ -133,7 +133,6 @@ void eventDrawingInterface::keyDown(GraphicsContext *gc, unsigned int keycode)
         if (isKeyPressed(KEY_CTRL))
         {
             vc->applyScaling(.8);
-            gc->clear();
             paint(gc);
         }
         break;
@@ -141,9 +140,7 @@ void eventDrawingInterface::keyDown(GraphicsContext *gc, unsigned int keycode)
     case '.':
         if (isKeyPressed(KEY_CTRL))
         {
-            // vc->addRotation(.1);
             vc->addHorizontalOrb(.1);
-            gc->clear();
             paint(gc);
         }
 
@@ -151,9 +148,22 @@ void eventDrawingInterface::keyDown(GraphicsContext *gc, unsigned int keycode)
     case ',':
         if (isKeyPressed(KEY_CTRL))
         {
-            // vc->addRotation(-.1);
             vc->addVerticalOrb(.1);
-            gc->clear();
+            paint(gc);
+        }
+        break;
+    case '>':
+        if (isKeyPressed(KEY_CTRL))
+        {
+            vc->addHorizontalOrb(-.1);
+            paint(gc);
+        }
+
+        break;
+    case '<':
+        if (isKeyPressed(KEY_CTRL))
+        {
+            vc->addVerticalOrb(-.1);
             paint(gc);
         }
         break;
@@ -161,7 +171,20 @@ void eventDrawingInterface::keyDown(GraphicsContext *gc, unsigned int keycode)
         if (isKeyPressed(KEY_CTRL))
         {
             vc->resetTransformation();
-            gc->clear();
+            paint(gc);
+        }
+        break;
+    case ';':
+        if (isKeyPressed(KEY_CTRL))
+        {
+            vc->addFov(1);
+            paint(gc);
+        }
+        break;
+    case '\'':
+        if (isKeyPressed(KEY_CTRL))
+        {
+            vc->addFov(-1);
             paint(gc);
         }
         break;
@@ -194,7 +217,6 @@ void eventDrawingInterface::mouseButtonDown(GraphicsContext *gc,
             if (isKeyPressed(KEY_CTRL))
             {
                 vc->applyScaling(1.2);
-                gc->clear();
                 paint(gc);
             }
             break;
@@ -202,7 +224,6 @@ void eventDrawingInterface::mouseButtonDown(GraphicsContext *gc,
             if (isKeyPressed(KEY_CTRL))
             {
                 vc->applyScaling(.8);
-                gc->clear();
                 paint(gc);
             }
             break;
@@ -213,7 +234,7 @@ void eventDrawingInterface::mouseButtonDown(GraphicsContext *gc,
 void eventDrawingInterface::mouseButtonUp(GraphicsContext *gc,
                                           unsigned int button, int x, int y)
 {
-    cout<<"Mouse up: " << button<<endl;
+    //cout<<"Mouse up: " << button<<endl;
     switch (button)
     {
         case 1:
@@ -268,8 +289,7 @@ void eventDrawingInterface::loadImage(GraphicsContext *gc)
     im.erase();
     im.in(file, curColor);
     file.close();
-    gc->clear();
-    im.draw(gc, vc);
+    paint(gc);
     cout << "Load successful!" << endl;
 }
 
